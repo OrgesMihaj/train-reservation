@@ -1,0 +1,59 @@
+@model IEnumerable<TrainReservation.Models.Train>
+
+@{
+    ViewData["Title"] = "Trains Inventory";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<br>
+
+<a class="btn btn-dark" asp-action="Create">Create New</a>
+
+<br>
+<br>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th class="text-center">
+                @Html.DisplayNameFor(model => model.Express)
+            </th>
+            <th class="text-center">
+                Allow seat(s) reservation?
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @item.Name
+            </td>
+            <td class="text-center">
+                @{
+                    var ExpressClassName = (item.Express) ? "badge badge-success" : "badge badge-danger";
+                    var ExpressStatus = (item.Express) ? "Yes" : "No";
+                }
+                <span class="@ExpressClassName"> @ExpressStatus </span>
+            </td>
+            <td class="text-center">
+                @{
+                    var BookSeatsClassName = (item.BookSeats) ? "badge badge-success" : "badge badge-danger";
+                    var BookSeatsStatus = (item.BookSeats) ? "Yes" : "No";
+                }
+                <span class="@BookSeatsClassName"> @BookSeatsStatus </span>
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.TrainID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.TrainID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.TrainID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
