@@ -47,17 +47,16 @@ namespace TrainReservation.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Train",
+                name: "Trains",
                 columns: table => new
                 {
                     TrainID = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
-                    Express = table.Column<bool>(nullable: false),
-                    BookSeats = table.Column<bool>(nullable: false)
+                    Express = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Train", x => x.TrainID);
+                    table.PrimaryKey("PK_Trains", x => x.TrainID);
                 });
 
             migrationBuilder.CreateTable(
@@ -167,7 +166,7 @@ namespace TrainReservation.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Journey",
+                name: "Journeys",
                 columns: table => new
                 {
                     JourneyID = table.Column<int>(nullable: false)
@@ -176,18 +175,17 @@ namespace TrainReservation.Migrations
                     Destination = table.Column<string>(nullable: true),
                     DepartsAt = table.Column<DateTime>(nullable: false),
                     ArrivesAt = table.Column<DateTime>(nullable: false),
-                    TrianID = table.Column<int>(nullable: false),
-                    TrainID = table.Column<int>(nullable: true)
+                    TrainID = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Journey", x => x.JourneyID);
+                    table.PrimaryKey("PK_Journeys", x => x.JourneyID);
                     table.ForeignKey(
-                        name: "FK_Journey_Train_TrainID",
+                        name: "FK_Journeys_Trains_TrainID",
                         column: x => x.TrainID,
-                        principalTable: "Train",
+                        principalTable: "Trains",
                         principalColumn: "TrainID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -228,8 +226,8 @@ namespace TrainReservation.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Journey_TrainID",
-                table: "Journey",
+                name: "IX_Journeys_TrainID",
+                table: "Journeys",
                 column: "TrainID");
         }
 
@@ -251,7 +249,7 @@ namespace TrainReservation.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Journey");
+                name: "Journeys");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -260,7 +258,7 @@ namespace TrainReservation.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Train");
+                name: "Trains");
         }
     }
 }

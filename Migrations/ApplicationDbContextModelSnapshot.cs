@@ -190,22 +190,18 @@ namespace TrainReservation.Migrations
 
                     b.Property<string>("Destination");
 
-                    b.Property<int?>("TrainID");
-
-                    b.Property<int>("TrianID");
+                    b.Property<int>("TrainID");
 
                     b.HasKey("JourneyID");
 
                     b.HasIndex("TrainID");
 
-                    b.ToTable("Journey");
+                    b.ToTable("Journeys");
                 });
 
             modelBuilder.Entity("TrainReservation.Models.Train", b =>
                 {
                     b.Property<int>("TrainID");
-
-                    b.Property<bool>("BookSeats");
 
                     b.Property<bool>("Express");
 
@@ -213,7 +209,7 @@ namespace TrainReservation.Migrations
 
                     b.HasKey("TrainID");
 
-                    b.ToTable("Train");
+                    b.ToTable("Trains");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -265,7 +261,8 @@ namespace TrainReservation.Migrations
                 {
                     b.HasOne("TrainReservation.Models.Train", "Train")
                         .WithMany("Journeys")
-                        .HasForeignKey("TrainID");
+                        .HasForeignKey("TrainID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

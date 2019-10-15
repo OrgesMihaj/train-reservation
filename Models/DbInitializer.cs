@@ -14,7 +14,7 @@ namespace TrainReservation.Models
             context.Database.EnsureCreated();
 
             // Look for any students.
-            if (context.Train.Any())
+            if (context.Trains.Any())
             {
                 // DB has been seeded
                 return;   
@@ -22,15 +22,15 @@ namespace TrainReservation.Models
 
             var trains = new Train[]
             {
-                new Train { TrainID = 1, Name="Carson",   Express = true,  BookSeats = true  },
-                new Train { TrainID = 2, Name="Meredith", Express = false, BookSeats = true  },
-                new Train { TrainID = 3, Name="Arturo",   Express = false, BookSeats = false },
-                new Train { TrainID = 4, Name="Gytis",    Express = false, BookSeats = false } 
+                new Train { TrainID = 1, Name="Carson",   Express = true  },
+                new Train { TrainID = 2, Name="Meredith", Express = false },
+                new Train { TrainID = 3, Name="Arturo",   Express = false },
+                new Train { TrainID = 4, Name="Gytis",    Express = false } 
             };
 
             foreach (Train train in trains)
             {
-                context.Train.Add(train);
+                context.Trains.Add(train);
             }
             
             context.SaveChanges();

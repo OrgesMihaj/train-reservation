@@ -8,25 +8,25 @@ using Microsoft.EntityFrameworkCore;
 using TrainReservation.Data;
 using TrainReservation.Models;
 
-
 namespace TrainReservation.Controllers
 {
-    public class TrainsController : Controller
+    public class JourneysController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public TrainsController(ApplicationDbContext context)
+        public JourneysController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Trains
+        // GET: Journeys
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Trains.ToListAsync());
+            var applicationDbContext = _context.Journeys.Include(j => j.Train);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Trains/Details/5
+        // GET: Journeys/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,39 +34,42 @@ namespace TrainReservation.Controllers
                 return NotFound();
             }
 
-            var trains = await _context.Trains
-                .FirstOrDefaultAsync(m => m.TrainID == id);
-            if (trains == null)
+            var journey = await _context.Journeys
+                .Include(j => j.Train)
+                .FirstOrDefaultAsync(m => m.JourneyID == id);
+            if (journey == null)
             {
                 return NotFound();
             }
 
-            return View(trains);
+            return View(journey);
         }
 
-        // GET: Trains/Create
+        // GET: Journeys/Create
         public IActionResult Create()
         {
+            ViewData["Trains"] = new SelectList(_context.Trains, "TrainID", "Name");
             return View();
         }
 
-        // POST: Trains/Create
+        // POST: Journeys/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TrainID,Name,Express")] Train train)
+        public async Task<IActionResult> Create([Bind("JourneyID,DepartsFrom,Destination,DepartsAt,ArrivesAt,TrainID")] Journey journey)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(train);
+                _context.Add(journey);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(train);
+            ViewData["TrainID"] = new SelectList(_context.Trains, "TrainID", "TrainID", journey.TrainID);
+            return View(journey);
         }
 
-        // GET: Trains/Edit/5
+        // GET: Journeys/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,22 +77,23 @@ namespace TrainReservation.Controllers
                 return NotFound();
             }
 
-            var trains = await _context.Trains.FindAsync(id);
-            if (trains == null)
+            var journey = await _context.Journeys.FindAsync(id);
+            if (journey == null)
             {
                 return NotFound();
             }
-            return View(trains);
+            ViewData["TrainID"] = new SelectList(_context.Trains, "TrainID", "TrainID", journey.TrainID);
+            return View(journey);
         }
 
-        // POST: Trains/Edit/5
+        // POST: Journeys/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TrainID,Name,Express")] Train train)
+        public async Task<IActionResult> Edit(int id, [Bind("JourneyID,DepartsFrom,Destination,DepartsAt,ArrivesAt,TrainID")] Journey journey)
         {
-            if (id != train.TrainID)
+            if (id != journey.JourneyID)
             {
                 return NotFound();
             }
@@ -98,12 +102,12 @@ namespace TrainReservation.Controllers
             {
                 try
                 {
-                    _context.Update(train);
+                    _context.Update(journey);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TrainExists(train.TrainID))
+                    if (!JourneyExists(journey.JourneyID))
                     {
                         return NotFound();
                     }
@@ -114,10 +118,11 @@ namespace TrainReservation.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(train);
+            ViewData["TrainID"] = new SelectList(_context.Trains, "TrainID", "TrainID", journey.TrainID);
+            return View(journey);
         }
 
-        // GET: Trains/Delete/5
+        // GET: Journeys/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,30 +130,31 @@ namespace TrainReservation.Controllers
                 return NotFound();
             }
 
-            var trains = await _context.Trains
-                .FirstOrDefaultAsync(m => m.TrainID == id);
-            if (trains == null)
+            var journey = await _context.Journeys
+                .Include(j => j.Train)
+                .FirstOrDefaultAsync(m => m.JourneyID == id);
+            if (journey == null)
             {
                 return NotFound();
             }
 
-            return View(trains);
+            return View(journey);
         }
 
-        // POST: Trains/Delete/5
+        // POST: Journeys/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var train = await _context.Trains.FindAsync(id);
-            _context.Trains.Remove(train);
+            var journey = await _context.Journeys.FindAsync(id);
+            _context.Journeys.Remove(journey);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TrainExists(int id)
+        private bool JourneyExists(int id)
         {
-            return _context.Trains.Any(e => e.TrainID == id);
+            return _context.Journeys.Any(e => e.JourneyID == id);
         }
     }
 }

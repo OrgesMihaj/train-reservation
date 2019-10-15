@@ -10,7 +10,6 @@ namespace TrainReservation.Models
         public int TrainID { get; set; }
         public string Name { get; set; }
         public bool Express { get; set; }
-        public bool BookSeats { get; set; }
-        public ICollection<Journey> Journeys { get; set; }
+        public virtual ICollection<Journey> Journeys { get; set; }
     }
 }
