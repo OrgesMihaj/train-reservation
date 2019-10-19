@@ -1,2 +1,22 @@
 ﻿
 
+/* <Table styles start here> */
+.table__head {
+    background: #A8C69F;
+}
+    .table__head th {
+        border-bottom: none !important;
+    }
+/* </Table styles end here> */
+
+
+/* <Footer styles start here> */
+.footer {
+    color: #E3DDDD;
+    background: #2B282A;
+}
+    .footer .footer__link {
+        color: #888C98;
+    }
+/* </Footer styles end here> */
+

@@ -1,43 +1,50 @@
 @model TrainReservation.Models.Train
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit an existing Train";
 }
 
-<h2>Edit</h2>
 
-<h4>Train</h4>
-<hr />
+<div class="mb-4 mt-4">
+    <h2>Edit an existing Train</h2>
+    <i class="fas fa-train"></i> <a asp-action="Index">Trains Inventory</a>
+</div>
+
+
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="TrainID" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
+    <div class="col-md-5">
+        
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="TrainID" />
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label">Train name</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
 
-            <div class="form-group">
-                <div class="form-check">
-                    <input asp-for="Express" class="form-check-input" type="checkbox">                
-                    <label class="form-check-label" asp-for="Express">
-                        Express Train
-                    </label>
-                </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input asp-for="Express" class="form-check-input" type="checkbox">                
+                            <label class="form-check-label" asp-for="Express">
+                                Express Train
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mb-0">
+                        <input type="submit" value="Save" class="btn btn-sm btn-dark" />
+                    </div>
+                </form>
             </div>
-            
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </form>
-    </div>
-</div>
+        </div> <!-- </card> -->
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    </div> <!-- </col> -->
+</div> <!-- </row> -->
+
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
