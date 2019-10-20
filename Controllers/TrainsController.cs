@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TrainReservation.Data;
 using TrainReservation.Models;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace TrainReservation.Controllers
 {
+    
     public class TrainsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,6 +23,7 @@ namespace TrainReservation.Controllers
         }
 
         // GET: Trains
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Trains.ToListAsync());

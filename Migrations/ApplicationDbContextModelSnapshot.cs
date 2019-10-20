@@ -37,6 +37,15 @@ namespace TrainReservation.Migrations
                         .HasName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "ffa011af-d05b-4e40-9f4d-e7cacdc5f850",
+                            ConcurrencyStamp = "3161be5e-3195-4ab0-8355-3120388581e8",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

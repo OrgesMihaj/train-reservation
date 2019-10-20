@@ -40,17 +40,20 @@ namespace TrainReservation
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddDefaultUI(UIFramework.Bootstrap4)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            
+            services.AddDefaultIdentity<IdentityUser>()
+                    .AddRoles<IdentityRole>()
+                    .AddDefaultUI(UIFramework.Bootstrap4)
+                    .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext context)
+        public void Configure(IApplicationBuilder app, 
+                              IHostingEnvironment env, 
+                              ApplicationDbContext context, 
+                              UserManager<IdentityUser> userManager)
         {
             if (env.IsDevelopment())
             {
@@ -78,6 +81,7 @@ namespace TrainReservation
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
+            AuthInitializer.Initialize(userManager);
             DbInitializer.Initialize(context);
         }
     }

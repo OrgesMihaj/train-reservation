@@ -4,7 +4,6 @@ using TrainReservation.Data;
 using TrainReservation.Models;
 using System.Threading.Tasks; 
 
-
 namespace TrainReservation.Models
 {
     public static class DbInitializer 
