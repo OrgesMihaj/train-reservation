@@ -1,59 +1,57 @@
 @model IEnumerable<TrainReservation.Models.Journey>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Journeys";
 }
 
-<h2>Index</h2>
+<div class="mb-4 mt-4">
+    <h2><i class="fas fa-route"></i> @ViewData["Title"]</h2>
+    <a class="btn btn-sm btn-dark mt-2" asp-action="Create">Add a new Journey</a>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+
+@if (ViewBag.Journeys != null) {
 <table class="table">
-    <thead>
+    <thead class="table__head">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DepartsFrom)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Destination)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DepartsAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ArrivesAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Train)
-            </th>
+            <th>@Html.DisplayNameFor(model => model.Departure)</th>
+            <th>@Html.DisplayNameFor(model => model.Destination)</th>
+            <th class="text-center">Departure Time</th>
+            <th class="text-center">Arrival Time</th>
+            <th>@Html.DisplayNameFor(model => model.Price)</th>
+            <th class="text-center">Allow seat reservation?</th>
+            <th><i class="fas fa-train"></i>  @Html.DisplayNameFor(model => model.Train)</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        
+        @foreach (var item in ViewBag.Journeys) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DepartsFrom)
+            <td>@item.Departure</td>
+            <td>@item.Destination</td>
+            <td>@item.DepartureTime</td>
+            <td>@item.ArrivalTime</td>
+            <td>$@item.Price</td>
+            <td class="text-center">
+                @{
+                    var className = (item.AllowSeatReservation) ? "badge badge-success" : "badge badge-danger";
+                    var status    = (item.AllowSeatReservation) ? "Yes" : "No";
+                }
+                <span class="@className"> @status </span>
             </td>
+            <td>@item.Train.Name</td>
             <td>
-                @Html.DisplayFor(modelItem => item.Destination)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DepartsAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ArrivesAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Train.TrainID)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.JourneyID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.JourneyID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.JourneyID">Delete</a>
+                <a class="btn btn-light btn-sm" asp-action="Edit" asp-route-id="@item.JourneyID">Edit</a>
+                <a class="btn btn-light btn-sm" asp-action="Delete" asp-route-id="@item.JourneyID">Delete</a>
             </td>
         </tr>
-}
+        }
+
     </tbody>
 </table>
+} else {
+    <span class="badge badge-danger">No Journeys created so far.</span>
+}
+
+

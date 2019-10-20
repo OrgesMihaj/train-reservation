@@ -1,8 +1,44 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿
+@{ ViewData["Title"] = "TravelWind"; }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<form class="form-inline mt-2 mb-5" asp-controller="Home" asp-action="Index">
+    <input class="form-control" name="RequestedDeparture" placeholder="Departure">
+    <input class="form-control ml-3" name="RequestedDestination" placeholder="Destination">
+    <input class="btn btn-dark ml-3" type="submit" value="Find" />
+</form>
+
+
+@if (ViewBag.Journeys != null) {
+    @foreach (var item in ViewBag.Journeys) {
+
+    <div class="row">
+        
+        <div class="col-md-8">
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    
+                    <div class="row">
+                        <div class="col-md-10">
+                            <h3><strong>@item.Departure - @item.Destination</strong> <span class="badge badge-success">$@item.Price</span> </h3>
+                            <p class="mb-0">Departure time: @item.DepartureTime</p>
+                            <p>Arrival time: @item.ArrivalTime</p>
+
+                            @if (@item.AllowSeatReservation) {
+                                <p class="badge badge-warning">This journey allows seat(s) reservation</p>
+                            }
+                        </div>
+
+                        <div class="col-md-2 d-flex align-items-center">
+                            <a class="btn btn-lg btn-dark" href="#">Book</a> 
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+        </div> 
+    </div> 
+
+    }
+}

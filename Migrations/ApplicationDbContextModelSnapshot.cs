@@ -182,13 +182,21 @@ namespace TrainReservation.Migrations
                     b.Property<int>("JourneyID")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("ArrivesAt");
+                    b.Property<bool>("AllowSeatReservation");
 
-                    b.Property<DateTime>("DepartsAt");
+                    b.Property<DateTime>("ArrivalTime");
 
-                    b.Property<string>("DepartsFrom");
+                    b.Property<string>("Departure")
+                        .IsRequired()
+                        .HasMaxLength(60);
 
-                    b.Property<string>("Destination");
+                    b.Property<DateTime>("DepartureTime");
+
+                    b.Property<string>("Destination")
+                        .IsRequired();
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<int>("TrainID");
 

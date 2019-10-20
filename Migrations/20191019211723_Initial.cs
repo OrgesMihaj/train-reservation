@@ -171,10 +171,12 @@ namespace TrainReservation.Migrations
                 {
                     JourneyID = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    DepartsFrom = table.Column<string>(nullable: true),
-                    Destination = table.Column<string>(nullable: true),
-                    DepartsAt = table.Column<DateTime>(nullable: false),
-                    ArrivesAt = table.Column<DateTime>(nullable: false),
+                    Departure = table.Column<string>(maxLength: 60, nullable: false),
+                    Destination = table.Column<string>(nullable: false),
+                    DepartureTime = table.Column<DateTime>(nullable: false),
+                    ArrivalTime = table.Column<DateTime>(nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    AllowSeatReservation = table.Column<bool>(nullable: false),
                     TrainID = table.Column<int>(nullable: false)
                 },
                 constraints: table =>

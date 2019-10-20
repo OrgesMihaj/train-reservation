@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TrainReservation</title>
+    <title>@ViewData["Title"]</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/fontawesome/css/all.css" />
@@ -20,39 +20,58 @@
     <link rel="stylesheet" href="~/css/styles.css" />
 </head>
 <body class="d-flex flex-column h-100">
+
+    <!-- Header section starts here -->
     <header>
+
+        <!-- Nav section starts here -->
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Travel<strong>Wind</strong></a>
+
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+
                     <partial name="_LoginPartial" />
+
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Travel</a>
                         </li>
+
+                        <!-- Manager dropdown nav section starts here -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                            <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user-cog"></i> Manager
+                            </a>
+
                             <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Separated link</a>
-                        </div>
+                                <a class="dropdown-item" asp-area="" asp-controller="Trains" asp-action="Index">
+                                    <i class="fas fa-train"></i> Trains Inventory
+                                </a>
+                                <a class="dropdown-item" asp-area="" asp-controller="Journeys" asp-action="Index">
+                                    <i class="fas fa-route"></i> Journeys
+                                </a>
+                            </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                        <!-- Manager dropdown nav section ends here -->
+
                     </ul>
-                </div>
-            </div>
+
+                </div> <!-- </navbar-collapse> -->
+            </div> <!-- </container> -->
+
         </nav>
+        <!-- Nav section ends here -->
+
     </header>
-    
+     <!-- Header section ends here -->
+
     <div class="container">
         <partial name="_CookieConsentPartial" />
         <main role="main" class="pb-3">

@@ -20,10 +20,10 @@ namespace TrainReservation.Controllers
         }
 
         // GET: Journeys
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var applicationDbContext = _context.Journeys.Include(j => j.Train);
-            return View(await applicationDbContext.ToListAsync());
+            ViewBag.Journeys = _context.Journeys.Include(j => j.Train);
+            return View();
         }
 
         // GET: Journeys/Details/5
@@ -57,7 +57,7 @@ namespace TrainReservation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("JourneyID,DepartsFrom,Destination,DepartsAt,ArrivesAt,TrainID")] Journey journey)
+        public async Task<IActionResult> Create([Bind("JourneyID,Departure,Destination,DepartureTime,ArrivalTime,Price,AllowSeatReservation,TrainID")] Journey journey)
         {
             if (ModelState.IsValid)
             {
@@ -82,7 +82,7 @@ namespace TrainReservation.Controllers
             {
                 return NotFound();
             }
-            ViewData["TrainID"] = new SelectList(_context.Trains, "TrainID", "TrainID", journey.TrainID);
+            ViewData["Trains"] = new SelectList(_context.Trains, "TrainID", "Name", journey.TrainID);
             return View(journey);
         }
 
@@ -91,7 +91,7 @@ namespace TrainReservation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("JourneyID,DepartsFrom,Destination,DepartsAt,ArrivesAt,TrainID")] Journey journey)
+        public async Task<IActionResult> Edit(int id, [Bind("JourneyID,Departure,Destination,DepartureTime,ArrivalTime,Price,AllowSeatReservation,TrainID")] Journey journey)
         {
             if (id != journey.JourneyID)
             {
