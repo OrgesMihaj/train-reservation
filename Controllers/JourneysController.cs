@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace TrainReservation.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    
     public class JourneysController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,7 +22,7 @@ namespace TrainReservation.Controllers
         }
 
         // GET: Journeys
-        
+        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
             ViewBag.Journeys = _context.Journeys.Include(j => j.Train);
@@ -49,6 +49,7 @@ namespace TrainReservation.Controllers
         }
 
         // GET: Journeys/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["Trains"] = new SelectList(_context.Trains, "TrainID", "Name");
@@ -60,6 +61,7 @@ namespace TrainReservation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("JourneyID,Departure,Destination,DepartureTime,ArrivalTime,Price,AllowSeatReservation,TrainID")] Journey journey)
         {
             if (ModelState.IsValid)
@@ -73,6 +75,7 @@ namespace TrainReservation.Controllers
         }
 
         // GET: Journeys/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -94,6 +97,7 @@ namespace TrainReservation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("JourneyID,Departure,Destination,DepartureTime,ArrivalTime,Price,AllowSeatReservation,TrainID")] Journey journey)
         {
             if (id != journey.JourneyID)
@@ -126,6 +130,7 @@ namespace TrainReservation.Controllers
         }
 
         // GET: Journeys/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -147,6 +152,7 @@ namespace TrainReservation.Controllers
         // POST: Journeys/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var journey = await _context.Journeys.FindAsync(id);

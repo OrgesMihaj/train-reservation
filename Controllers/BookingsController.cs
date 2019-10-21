@@ -13,6 +13,7 @@ namespace TrainReservation.Controllers
 {
     public class BookingsController : Controller
     {
+        
         private readonly ApplicationDbContext _context;
 
         public BookingsController(ApplicationDbContext context)
