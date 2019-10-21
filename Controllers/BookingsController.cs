@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace TrainReservation.Controllers
 {
+    [Authorize]
     public class BookingsController : Controller
     {
         
