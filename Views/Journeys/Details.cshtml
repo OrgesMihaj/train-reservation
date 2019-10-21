@@ -1,60 +1,39 @@
 @model TrainReservation.Models.Journey
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Book your next yourney";
 }
 
-<h2>Details</h2>
+<div class="row mb-4">
+    <div class="col-md-7">
 
-<div>
-    <h4>Journey</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Departure)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Departure)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Destination)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Destination)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.DepartureTime)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.DepartureTime)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.ArrivalTime)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.ArrivalTime)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.AllowSeatReservation)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.AllowSeatReservation)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Train)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Train.TrainID)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.JourneyID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+        <div class="card">
+            <div class="card-body">
+                <h3>
+                    <strong>@Model.Departure - @Model.Destination</strong>
+                    <span class="badge badge-success">$@Model.Price</span>
+                </h3>
+                <p>@Model.DepartureTime - @Model.ArrivalTime</p>
+                <p class="mb-0"><i class="fas fa-train"></i> @Model.Train.Name</p>
+
+                <hr>
+
+                <a class="btn btn-sm btn-dark" href="#">Book</a> 
+                <a class="btn btn-sm btn-light ml-2" href="/home">Travel</a> 
+            </div> <!-- </card-body> -->
+        </div> <!-- </card> -->
+
+    </div> <!-- </col> -->
+
+    @if (@Model.AllowSeatReservation) {
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body">
+                <h4>Select your seat(s)</h4>
+                <p>If you do not select any seat the system will automatically select for you.</p>
+            </div>
+        </div> 
+    </div>
+    }
+
+</div> <!-- </row> -->
