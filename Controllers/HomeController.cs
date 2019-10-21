@@ -25,12 +25,12 @@ namespace TrainReservation.Controllers
 
             if (!String.IsNullOrEmpty(RequestedDeparture))
             {
-                Journeys = Journeys.Where(s => s.Departure.Contains(RequestedDeparture));
+                Journeys = Journeys.Where(s => s.Departure.ToLower().Contains(RequestedDeparture.ToLower()));
             }
 
             if (!String.IsNullOrEmpty(RequestedDestination))
             {
-                Journeys = Journeys.Where(s => s.Destination.Contains(RequestedDestination));
+                Journeys = Journeys.Where(s => s.Destination.ToLower().Contains(RequestedDestination.ToLower()));
             }
 
             ViewBag.Journeys = Journeys.Include(j => j.Train);
