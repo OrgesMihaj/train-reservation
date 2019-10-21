@@ -39,5 +39,14 @@ namespace TrainReservation.Controllers
             return Redirect("/Bookings");
         }
 
+        public async Task<IActionResult> CancelBooking(int BookingID)
+        {
+            var booking = await _context.Bookings.FindAsync(BookingID);
+            _context.Bookings.Remove(booking);
+            await _context.SaveChangesAsync();
+
+            return Redirect("/Bookings");
+        }
+
     }
 }

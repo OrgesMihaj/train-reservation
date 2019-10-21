@@ -19,6 +19,12 @@
                                 <span class="badge badge-success">$@booking.Journey.Price</span>
                             </h3>
                             <p>@booking.Journey.DepartureTime - @booking.Journey.ArrivalTime</p>
+
+                            <form asp-action="CancelBooking" asp-controller="Bookings">
+                                <input type="hidden" name="BookingID" value="@booking.BookingID" />
+
+                                <input type="submit" value="Cancel" class="btn btn-sm btn-danger" >
+                            </form>
                         </div>
                     </div>
             </div> 
