@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using TrainReservation.Data;
 using TrainReservation.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace TrainReservation.Controllers
 {
@@ -37,8 +39,11 @@ namespace TrainReservation.Controllers
                 return NotFound();
             }
 
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var journey = await _context.Journeys
                 .Include(j => j.Train)
+                .Include(j => j.Bookings)
                 .FirstOrDefaultAsync(m => m.JourneyID == id);
             if (journey == null)
             {

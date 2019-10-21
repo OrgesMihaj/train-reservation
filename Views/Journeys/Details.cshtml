@@ -22,9 +22,20 @@
 
                 <form asp-action="BookJourney" asp-controller="Bookings">
                     <input type="hidden" name="JourneyID" value="@Model.JourneyID" />
+
                     <input type="hidden" name="UserID" value="@userManager.GetUserId(User)" />
 
-                    <input type="submit" value="Book" class="btn btn-sm btn-dark" >
+                    @{ var submittionNotAllowed = false; 
+
+                        foreach (var booking in @Model.Bookings) {
+                            if (booking.UserID == @userManager.GetUserId(User)) {
+                                submittionNotAllowed = true;
+                            }
+                        }
+                    }
+
+                    <input type="submit" value="Book" class="btn btn-sm btn-dark" disabled="@submittionNotAllowed">
+                    
 
                     <a class="btn btn-sm btn-light ml-2" href="/home">Travel</a> 
                 </form>
