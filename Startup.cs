@@ -81,6 +81,8 @@ namespace TrainReservation
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
+            
+
             AuthInitializer.Initialize(userManager);
             DbInitializer.Initialize(context);
         }

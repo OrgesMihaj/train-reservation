@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+
+<!DOCTYPE html>
 <html lang="en" class="h-100">
 <head>
     <meta charset="utf-8" />
@@ -44,6 +47,7 @@
                         </li>
 
                         <!-- Manager dropdown nav section starts here -->
+                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin")) {
                         <li class="nav-item dropdown">
                             <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-user-cog"></i> Manager
@@ -58,6 +62,7 @@
                                 </a>
                             </div>
                         </li>
+                        }
                         <!-- Manager dropdown nav section ends here -->
 
                     </ul>

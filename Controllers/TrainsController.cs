@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace TrainReservation.Controllers
 {
-    
+    [Authorize(Roles = "Admin")]
     public class TrainsController : Controller
     {
         private readonly ApplicationDbContext _context;

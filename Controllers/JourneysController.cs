@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TrainReservation.Data;
 using TrainReservation.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TrainReservation.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class JourneysController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,6 +22,7 @@ namespace TrainReservation.Controllers
         }
 
         // GET: Journeys
+        
         public IActionResult Index()
         {
             ViewBag.Journeys = _context.Journeys.Include(j => j.Train);
