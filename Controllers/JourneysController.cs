@@ -39,8 +39,6 @@ namespace TrainReservation.Controllers
                 return NotFound();
             }
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
             var journey = await _context.Journeys
                 .Include(j => j.Train)
                 .Include(j => j.Bookings)
