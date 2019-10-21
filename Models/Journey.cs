@@ -37,5 +37,7 @@ namespace TrainReservation.Models
         // Delegation
         // Only one train can participate in a journey. 
         public virtual Train Train { get; set; }
+
+        public virtual ICollection<Booking> Bookings { get; set; }
     }
 }

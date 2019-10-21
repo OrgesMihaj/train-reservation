@@ -6,9 +6,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace TrainReservation.Models
 {
     public class Booking {
+        
         public int BookingID { get; set; }
+        public string UserID { get; set; }
+        public AppUser AppUser { get; set; }
 
-        public int UserID { get; set; } 
-        public int JourneyID { get; set; } 
+       
+        public int JourneyID { get; set; }
+        public Journey Journey { get; set; }
     }
 }

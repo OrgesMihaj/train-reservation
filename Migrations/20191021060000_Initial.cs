@@ -39,7 +39,9 @@ namespace TrainReservation.Migrations
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false)
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    FirstName = table.Column<string>(nullable: true),
+                    LastName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -190,10 +192,37 @@ namespace TrainReservation.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Bookings",
+                columns: table => new
+                {
+                    BookingID = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserID = table.Column<string>(nullable: true),
+                    AppUserId = table.Column<string>(nullable: true),
+                    JourneyID = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bookings", x => x.BookingID);
+                    table.ForeignKey(
+                        name: "FK_Bookings_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Journeys_JourneyID",
+                        column: x => x.JourneyID,
+                        principalTable: "Journeys",
+                        principalColumn: "JourneyID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "ffa011af-d05b-4e40-9f4d-e7cacdc5f850", "3161be5e-3195-4ab0-8355-3120388581e8", "Admin", "ADMIN" });
+                values: new object[] { "20f5e050-6280-425e-98cf-7c1c4ace2749", "d0001454-4be3-4c9f-8988-ebcfa6c8e2f5", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -233,6 +262,16 @@ namespace TrainReservation.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bookings_AppUserId",
+                table: "Bookings",
+                column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_JourneyID",
+                table: "Bookings",
+                column: "JourneyID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Journeys_TrainID",
                 table: "Journeys",
                 column: "TrainID");
@@ -256,13 +295,16 @@ namespace TrainReservation.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Journeys");
+                name: "Bookings");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Journeys");
 
             migrationBuilder.DropTable(
                 name: "Trains");

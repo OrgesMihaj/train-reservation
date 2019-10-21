@@ -41,7 +41,7 @@ namespace TrainReservation
                 options.UseSqlite(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddDefaultIdentity<AppUser>()
                     .AddRoles<IdentityRole>()
                     .AddDefaultUI(UIFramework.Bootstrap4)
                     .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -53,7 +53,7 @@ namespace TrainReservation
         public void Configure(IApplicationBuilder app, 
                               IHostingEnvironment env, 
                               ApplicationDbContext context, 
-                              UserManager<IdentityUser> userManager)
+                              UserManager<AppUser> userManager)
         {
             if (env.IsDevelopment())
             {
@@ -81,10 +81,7 @@ namespace TrainReservation
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            
-
-            AuthInitializer.Initialize(userManager);
-            DbInitializer.Initialize(context);
+            DbInitializer.Initialize(context, userManager);
         }
     }
 }

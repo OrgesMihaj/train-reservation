@@ -8,12 +8,13 @@ using TrainReservation.Models;
 
 namespace TrainReservation.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<TrainReservation.Models.Train> Trains { get; set; }
         public DbSet<TrainReservation.Models.Journey> Journeys { get; set; }
+        public DbSet<TrainReservation.Models.Booking> Bookings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,6 +24,7 @@ namespace TrainReservation.Data
             // Add your customizations after calling base.OnModelCreating(builder);
 
             modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Name = "Admin", NormalizedName = "Admin".ToUpper() });
+            
         }
     }
 }

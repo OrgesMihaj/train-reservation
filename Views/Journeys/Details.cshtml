@@ -1,3 +1,5 @@
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> userManager
 @model TrainReservation.Models.Journey
 
 @{
@@ -6,7 +8,7 @@
 
 <div class="row mb-4">
     <div class="col-md-7">
-
+        
         <div class="card">
             <div class="card-body">
                 <h3>
@@ -18,8 +20,15 @@
 
                 <hr>
 
-                <a class="btn btn-sm btn-dark" href="#">Book</a> 
-                <a class="btn btn-sm btn-light ml-2" href="/home">Travel</a> 
+                <form asp-action="BookJourney" asp-controller="Bookings">
+                    <input type="hidden" name="JourneyID" value="@Model.JourneyID" />
+                    <input type="hidden" name="UserID" value="@userManager.GetUserId(User)" />
+
+                    <input type="submit" class="btn btn-sm btn-dark" >
+
+                    <a class="btn btn-sm btn-light ml-2" href="/home">Travel</a> 
+                </form>
+
             </div> <!-- </card-body> -->
         </div> <!-- </card> -->
 

@@ -3,17 +3,52 @@ using System.Linq;
 using TrainReservation.Data;
 using TrainReservation.Models;
 using System.Threading.Tasks; 
+using Microsoft.AspNetCore.Identity;
 
 namespace TrainReservation.Models
 {
     public static class DbInitializer 
     {
-        public static void Initialize(ApplicationDbContext context) 
+        public static void Initialize(ApplicationDbContext context, UserManager<AppUser> userManager) 
         {
+            string password = "P@ssword1";
+
+            // list of admin users
+            string[,] users = new string[,]
+            {
+                {"Orges", "Mihaj", "onm170@aubg.edu"},
+                {"Lazarot", "Shyta", "lns170@aubg.edu"},
+                {"Besar", "Limani", "bnl160@aubg.edu"}
+            };
+
+            for (int i = 0; i < 3; i++) {
+
+                // check if user already exists
+                if (userManager.FindByEmailAsync(users[i, 2]).Result == null)
+                {
+                    AppUser AppUser = new AppUser
+                    {
+                        UserName = users[i, 2],
+                        Email = users[i, 2],
+                        FirstName = users[i, 0],
+                        LastName = users[i, 1],
+                    };
+
+                    // add new user
+                    IdentityResult result = userManager.CreateAsync(AppUser, password).Result;
+
+                    if (result.Succeeded)
+                    {
+                        // assign admin role to user
+                        userManager.AddToRoleAsync(AppUser, "Admin").Wait();
+                    }
+                }       
+            }
+
             context.Database.EnsureCreated();
 
             // Look for any students.
-            if (context.Trains.Any())
+            if (context.Trains.Any() && context.Journeys.Any())
             {
                 // DB has been seeded
                 return;   

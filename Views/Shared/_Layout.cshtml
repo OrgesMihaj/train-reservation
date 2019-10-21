@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
+@inject SignInManager<AppUser> SignInManager
 
 <!DOCTYPE html>
 <html lang="en" class="h-100">
@@ -45,6 +45,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Travel</a>
                         </li>
+
+                        @if (SignInManager.IsSignedIn(User)) {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Bookings" asp-action="Index">Bookings</a>
+                            </li>
+                        }
 
                         <!-- Manager dropdown nav section starts here -->
                         @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin")) {
