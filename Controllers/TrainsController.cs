@@ -58,7 +58,7 @@ namespace TrainReservation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TrainID,Name,Express")] Train train)
+        public async Task<IActionResult> Create([Bind("TrainID,Name,Capacity,Express")] Train train)
         {
             if (ModelState.IsValid)
             {
@@ -90,7 +90,7 @@ namespace TrainReservation.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TrainID,Name,Express")] Train train)
+        public async Task<IActionResult> Edit(int id, [Bind("TrainID,Name,Capacity,Express")] Train train)
         {
             if (id != train.TrainID)
             {

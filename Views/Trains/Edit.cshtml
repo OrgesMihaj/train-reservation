@@ -21,8 +21,22 @@
                     <div class="form-group">
                         <label asp-for="Name" class="control-label">Train name</label>
                         <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
+                        <span asp-validation-for="Name" class="badge badge-danger"></span>
                     </div>
+
+                    <div class="form-group">
+                        <label asp-for="Capacity" class="control-label">Capacity</label>
+                        
+                        <select class="form-control" asp-for="Capacity">
+                            <option>Select train capacity</option>
+                            <option value="32">32</option>
+                            <option value="64">64</option>
+                            <option value="128">128</option>
+                        </select>
+
+                        <span asp-validation-for="Capacity" class="badge badge-danger"></span>
+                    </div>
+
 
                     <div class="form-group">
                         <div class="form-check">

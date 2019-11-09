@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TrainReservation.Migrations
 {
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -53,7 +53,8 @@ namespace TrainReservation.Migrations
                 columns: table => new
                 {
                     TrainID = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: false),
+                    Capacity = table.Column<int>(nullable: false),
                     Express = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
@@ -222,7 +223,7 @@ namespace TrainReservation.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "20f5e050-6280-425e-98cf-7c1c4ace2749", "d0001454-4be3-4c9f-8988-ebcfa6c8e2f5", "Admin", "ADMIN" });
+                values: new object[] { "66706450-807b-46f3-a5fb-86ba90b85378", "abfa3c7a-e64d-475c-b11d-af1fba9aee0a", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

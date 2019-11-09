@@ -56,10 +56,10 @@ namespace TrainReservation.Models
 
             var trains = new Train[]
             {
-                new Train { TrainID = 1, Name="Carson",   Express = true  },
-                new Train { TrainID = 2, Name="Meredith", Express = false },
-                new Train { TrainID = 3, Name="Arturo",   Express = false },
-                new Train { TrainID = 4, Name="Gytis",    Express = false } 
+                new Train { TrainID = 1, Name="Carson",   Capacity = 32,  Express = true  },
+                new Train { TrainID = 2, Name="Meredith", Capacity = 64,  Express = false },
+                new Train { TrainID = 3, Name="Arturo",   Capacity = 128, Express = false },
+                new Train { TrainID = 4, Name="Gytis",    Capacity = 64,  Express = false } 
             };
 
             foreach (Train train in trains)
