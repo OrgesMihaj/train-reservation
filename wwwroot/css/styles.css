@@ -1,4 +1,5 @@
 ﻿
+
 li {
     list-style: none;
 }
@@ -11,6 +12,68 @@ li {
         border-bottom: none !important;
     }
 /* </Table styles end here> */
+
+/* <Booking styles start here */
+.passengers {
+	display: flex;
+		align-content: center;
+	margin: 3% 0;
+}	
+
+	.passengers__title {
+		background: #729EA1;
+		border-radius: 5px;
+		color: #FAF6E9;
+		font-size: .8rem;
+		font-weight: 700;
+		
+		line-height: 25px;
+		margin-top: auto;
+		margin-bottom: auto;
+		margin-right: 1rem;
+		padding: 0 7px;
+	}
+
+	.passengers__control {
+		border-radius: 2px;
+		border: 2px solid #2B282A;
+		display: flex;
+		height: 25px;
+		text-align: center;
+	}
+
+	.passengers__number {
+		background: none;
+    	outline: none;
+		pointer-events: none;
+		text-align: center;
+		height: 25px;
+		width: 40px;
+	}
+
+	.passengers__number--minus,
+	.passengers__number--plus {
+		background: #FAF6E9;
+		cursor: pointer;
+		font-weight: 700;
+		transition: background 330ms ease-in-out;
+		width: 20px;
+	}
+		.passengers__number--minus .minus {
+			position: relative;
+				bottom: 2px;
+		}
+
+	.passengers__number--minus:hover,
+	.passengers__number--plus:hover {
+		background: #DB9D47;
+		color: #fff;
+		
+
+	}
+
+
+/* <Booking styles end here */
 
 
 /* <Footer styles start here> */

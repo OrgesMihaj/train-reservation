@@ -11,8 +11,9 @@ namespace TrainReservation.Models
         public string UserID { get; set; }
         public AppUser AppUser { get; set; }
 
-       
         public int JourneyID { get; set; }
         public Journey Journey { get; set; }
+
+        public int Passengers { get; set; }
     }
 }

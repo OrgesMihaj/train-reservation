@@ -5,32 +5,47 @@
 
 <h4 class="mt-2 mb-3">Your bookings</h4>
 
-
-@if (ViewBag.Bookings != null ) {
-
+<!-- Checking if there are any existing bookings -->
+@if (Enumerable.Count(ViewBag.Bookings) > 0) {
+    
+    // Bookings list starts here 
     @foreach (var booking in ViewBag.Bookings) {
-        @if (@userManager.GetUserId(User) == @booking.UserID) {
+
+        var bookingTotalPrice = booking.Journey.Price * booking.Passengers;
+
         <div class="row mb-5">
             <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <h3>
-                                <strong>@booking.Journey.Departure - @booking.Journey.Destination</strong>
-                                <span class="badge badge-success">$@booking.Journey.Price</span>
-                            </h3>
+
+                <div class="card">
+                    <div class="card-body">
+                        
+                        <h3 class="booking__title">
+                            <strong>@booking.Journey.Departure - @booking.Journey.Destination</strong>
+                            <span class="badge badge-success">$@bookingTotalPrice</span>
+                        </h3>
+
+                        <div class="booking__details">
+                            <p><i class="fas fa-users"></i> Passengers: @booking.Passengers</p>
                             <p>@booking.Journey.DepartureTime - @booking.Journey.ArrivalTime</p>
-
-                            <form asp-action="CancelBooking" asp-controller="Bookings">
-                                <input type="hidden" name="BookingID" value="@booking.BookingID" />
-
-                                <input type="submit" value="Cancel" class="btn btn-sm btn-danger" >
-                            </form>
                         </div>
+                        
+
+                        <form asp-action="CancelBooking" asp-controller="Bookings">
+                            <input type="hidden" name="BookingID" value="@booking.BookingID" />
+
+                            <input type="submit" value="Cancel" class="btn btn-sm btn-danger" >
+                        </form>
+
                     </div>
+                </div>
+
             </div> 
-        </div> 
-        }
+
+        </div>
+
     }
+    // Bookings list ends here
+
 } else {
     <span class="badge badge-warning">No bookings so far.</span>
 }

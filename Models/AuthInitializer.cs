@@ -9,9 +9,5 @@ public static class AuthInitializer
 {
     public static void Initialize(UserManager<AppUser> userManager)
     {
-
-        
-
-        
     }   
 }

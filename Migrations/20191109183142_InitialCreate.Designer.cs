@@ -9,7 +9,7 @@ using TrainReservation.Data;
 namespace TrainReservation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191109123121_InitialCreate")]
+    [Migration("20191109183142_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,8 +43,8 @@ namespace TrainReservation.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "66706450-807b-46f3-a5fb-86ba90b85378",
-                            ConcurrencyStamp = "abfa3c7a-e64d-475c-b11d-af1fba9aee0a",
+                            Id = "15c25cd8-585c-4b84-a92f-4ef64f9b2151",
+                            ConcurrencyStamp = "d6928cd7-a1be-4553-b292-2574e5c2698f",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -200,6 +200,8 @@ namespace TrainReservation.Migrations
                     b.Property<string>("AppUserId");
 
                     b.Property<int>("JourneyID");
+
+                    b.Property<int>("Passengers");
 
                     b.Property<string>("UserID");
 

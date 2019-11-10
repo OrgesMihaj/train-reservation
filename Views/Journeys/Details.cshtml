@@ -4,48 +4,95 @@
 
 @{
     ViewData["Title"] = "Book your next yourney";
+
+    var submittionNotAllowed = false; 
+
+    // Check if user has already submitted the booking request 
+    foreach (var booking in @Model.Bookings) {
+        if (booking.UserID == @userManager.GetUserId(User)) {
+            submittionNotAllowed = true;
+        }
+    }
+}
+
+@section scripts {
+    <script>
+        function updatePassengers(passengers) {
+            $('.passengers__number').text(passengers);
+            $('.passengers__number--input').val(passengers);
+            
+            $('#price').text("$" + @Model.Price * passengers);
+        }
+
+        (function () {
+            let passengers = parseInt($('.passengers__number--input').val());
+            
+            $('.passengers__number--minus').on('click', function () {
+                if (passengers > 1) passengers -= 1;
+                updatePassengers(passengers);
+            });
+
+            $('.passengers__number--plus').on('click', function () {
+                passengers += 1;
+
+                updatePassengers(passengers);
+            });
+        })();
+    </script>
 }
 
 <div class="row mb-4">
     <div class="col-md-7">
-        
+
+        <!-- Booking section starts here -->
         <div class="card">
             <div class="card-body">
+
+                <!-- <Booking details> -->
                 <h3>
                     <strong>@Model.Departure - @Model.Destination</strong>
-                    <span class="badge badge-success">$@Model.Price</span>
+                    <span class="badge badge-success" id="price">$@Model.Price</span>
                 </h3>
                 <p>@Model.DepartureTime - @Model.ArrivalTime</p>
                 <p class="mb-0"><i class="fas fa-train"></i> @Model.Train.Name</p>
-
-                <hr>
-
+                <!-- </Booking details> -->
+                
+                <!-- <Booking form> -->
                 <form asp-action="BookJourney" asp-controller="Bookings">
+
+                    <!-- <Booking form: Passengers> -->
+                    <div class="passengers">
+                        <div for="Passengers" class="passengers__title">
+                            <i class="fas fa-users"></i> How many passengers?
+                        </div>
+
+                        <div class="passengers__control">
+                            <div class="passengers__number--minus"><span class="minus">-</span></div>
+                            <div class="passengers__number">1</div>
+                            <div class="passengers__number--plus"><span class="plus">+</span></div>
+                        </div>
+                    </div>
+                     <!-- </Booking form: Passengers> -->
+
+                    <hr>
+
+                    <input type="number" name="Passengers" class="passengers__number--input" min="1" max="100" value="1" hidden />
                     <input type="hidden" name="JourneyID" value="@Model.JourneyID" />
-
                     <input type="hidden" name="UserID" value="@userManager.GetUserId(User)" />
-
-                    @{ var submittionNotAllowed = false; 
-
-                        foreach (var booking in @Model.Bookings) {
-                            if (booking.UserID == @userManager.GetUserId(User)) {
-                                submittionNotAllowed = true;
-                            }
-                        }
-                    }
 
                     <input type="submit" value="Book" class="btn btn-sm btn-dark" disabled="@submittionNotAllowed">
 
                     <a class="btn btn-sm btn-light ml-2" href="/home">Travel</a> 
                 </form>
-
-                
+                <!-- </Booking form> -->
 
             </div> <!-- </card-body> -->
         </div> <!-- </card> -->
 
     </div> <!-- </col> -->
+    <!-- Booking section ends here -->
 
+    <!-- Seat(s) reservation section starts here -->
     @if (@Model.AllowSeatReservation) {
     <div class="col-md-5">
         <div class="card">
@@ -315,5 +362,7 @@
         </div> 
     </div>
     }
+    <!-- Seat(s) reservation section ends here -->
+
 
 </div> <!-- </row> -->

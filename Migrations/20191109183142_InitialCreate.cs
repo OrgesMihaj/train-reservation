@@ -201,7 +201,8 @@ namespace TrainReservation.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     UserID = table.Column<string>(nullable: true),
                     AppUserId = table.Column<string>(nullable: true),
-                    JourneyID = table.Column<int>(nullable: false)
+                    JourneyID = table.Column<int>(nullable: false),
+                    Passengers = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -223,7 +224,7 @@ namespace TrainReservation.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "66706450-807b-46f3-a5fb-86ba90b85378", "abfa3c7a-e64d-475c-b11d-af1fba9aee0a", "Admin", "ADMIN" });
+                values: new object[] { "15c25cd8-585c-4b84-a92f-4ef64f9b2151", "d6928cd7-a1be-4553-b292-2574e5c2698f", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
