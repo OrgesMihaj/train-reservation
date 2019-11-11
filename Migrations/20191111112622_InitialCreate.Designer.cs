@@ -9,7 +9,7 @@ using TrainReservation.Data;
 namespace TrainReservation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191109183142_InitialCreate")]
+    [Migration("20191111112622_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,8 +43,8 @@ namespace TrainReservation.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "15c25cd8-585c-4b84-a92f-4ef64f9b2151",
-                            ConcurrencyStamp = "d6928cd7-a1be-4553-b292-2574e5c2698f",
+                            Id = "3d5dee80-095f-4787-8cca-59e26ea10449",
+                            ConcurrencyStamp = "9ff0a276-a719-42d3-bfe7-5f3e328b5d7e",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -244,6 +244,25 @@ namespace TrainReservation.Migrations
                     b.ToTable("Journeys");
                 });
 
+            modelBuilder.Entity("TrainReservation.Models.Seat", b =>
+                {
+                    b.Property<int>("SeatID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("BookingID");
+
+                    b.Property<int>("Number");
+
+                    b.Property<string>("UserID")
+                        .IsRequired();
+
+                    b.HasKey("SeatID");
+
+                    b.HasIndex("BookingID");
+
+                    b.ToTable("Seat");
+                });
+
             modelBuilder.Entity("TrainReservation.Models.Train", b =>
                 {
                     b.Property<int>("TrainID");
@@ -322,6 +341,14 @@ namespace TrainReservation.Migrations
                     b.HasOne("TrainReservation.Models.Train", "Train")
                         .WithMany("Journeys")
                         .HasForeignKey("TrainID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("TrainReservation.Models.Seat", b =>
+                {
+                    b.HasOne("TrainReservation.Models.Booking", "Booking")
+                        .WithMany("Seats")
+                        .HasForeignKey("BookingID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

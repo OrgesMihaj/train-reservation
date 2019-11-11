@@ -41,6 +41,7 @@ namespace TrainReservation.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
+            
             ViewBag.Bookings = _context.Bookings.Where(b => b.UserID == user.Id).Include(b => b.Journey);
 
             return View();  
@@ -51,6 +52,8 @@ namespace TrainReservation.Controllers
         [ValidateAntiForgeryToken] /* [1] */
         public async Task<ActionResult> BookJourney([Bind("JourneyID,UserID,Passengers")] Booking booking) { /* [2] */
             
+            string Seats = "3,8,9";
+
             if (ModelState.IsValid) /* [3] */
             {
                 _context.Add(booking);

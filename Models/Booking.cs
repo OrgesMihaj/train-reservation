@@ -15,5 +15,7 @@ namespace TrainReservation.Models
         public Journey Journey { get; set; }
 
         public int Passengers { get; set; }
+
+        public virtual ICollection<Seat> Seats { get; set; }
     }
 }

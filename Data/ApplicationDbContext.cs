@@ -25,6 +25,7 @@ namespace TrainReservation.Data
 
             modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Name = "Admin", NormalizedName = "Admin".ToUpper() });
             
+            modelBuilder.Entity<Booking>().HasMany(c => c.Seats).WithOne(s => s.Booking);
         }
     }
 }

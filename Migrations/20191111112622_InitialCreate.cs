@@ -221,10 +221,31 @@ namespace TrainReservation.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Seat",
+                columns: table => new
+                {
+                    SeatID = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    UserID = table.Column<string>(nullable: false),
+                    BookingID = table.Column<int>(nullable: false),
+                    Number = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Seat", x => x.SeatID);
+                    table.ForeignKey(
+                        name: "FK_Seat_Bookings_BookingID",
+                        column: x => x.BookingID,
+                        principalTable: "Bookings",
+                        principalColumn: "BookingID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "15c25cd8-585c-4b84-a92f-4ef64f9b2151", "d6928cd7-a1be-4553-b292-2574e5c2698f", "Admin", "ADMIN" });
+                values: new object[] { "3d5dee80-095f-4787-8cca-59e26ea10449", "9ff0a276-a719-42d3-bfe7-5f3e328b5d7e", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -277,6 +298,11 @@ namespace TrainReservation.Migrations
                 name: "IX_Journeys_TrainID",
                 table: "Journeys",
                 column: "TrainID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Seat_BookingID",
+                table: "Seat",
+                column: "BookingID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -297,10 +323,13 @@ namespace TrainReservation.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Bookings");
+                name: "Seat");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Bookings");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
