@@ -41,8 +41,8 @@ namespace TrainReservation.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f8c2540d-bfce-4533-9baf-98a6a5b726cf",
-                            ConcurrencyStamp = "b02a2a37-a999-4b9f-916d-12bb295b994c",
+                            Id = "441f7434-4180-4833-bb92-e9ca08d02a4c",
+                            ConcurrencyStamp = "4eabdc46-df8b-48c6-acdf-5eb778847778",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -249,6 +249,8 @@ namespace TrainReservation.Migrations
 
                     b.Property<int>("BookingID");
 
+                    b.Property<int>("JourneyID");
+
                     b.Property<int>("Number");
 
                     b.Property<string>("UserID")
@@ -257,6 +259,8 @@ namespace TrainReservation.Migrations
                     b.HasKey("SeatID");
 
                     b.HasIndex("BookingID");
+
+                    b.HasIndex("JourneyID");
 
                     b.ToTable("Seats");
                 });
@@ -347,6 +351,11 @@ namespace TrainReservation.Migrations
                     b.HasOne("TrainReservation.Models.Booking", "Booking")
                         .WithMany("Seats")
                         .HasForeignKey("BookingID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("TrainReservation.Models.Journey", "Journey")
+                        .WithMany("Seats")
+                        .HasForeignKey("JourneyID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

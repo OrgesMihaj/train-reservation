@@ -38,6 +38,8 @@ namespace TrainReservation.Models
         // Only one train can participate in a journey. 
         public virtual Train Train { get; set; }
 
+        public virtual ICollection<Seat> Seats { get; set; }
+
         public virtual ICollection<Booking> Bookings { get; set; }
     }
 }

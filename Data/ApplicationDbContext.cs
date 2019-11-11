@@ -30,6 +30,10 @@ namespace TrainReservation.Data
 
             // [Booking:Seats] One-to-Many relationship
             modelBuilder.Entity<Booking>().HasMany(c => c.Seats).WithOne(s => s.Booking);
+            
+            modelBuilder.Entity<Journey>().HasMany(c => c.Seats).WithOne(s => s.Journey);
+
+
 
             // [Journey:Booking] One-to-Many relationship
             modelBuilder.Entity<Journey>().HasMany(j => j.Bookings).WithOne(b => b.Journey);

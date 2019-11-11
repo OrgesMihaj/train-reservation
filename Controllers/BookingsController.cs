@@ -42,7 +42,7 @@ namespace TrainReservation.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
-
+            
             ViewBag.Bookings = _context.Bookings
                                        .Where(b => b.UserID == user.Id)
                                        .Include(b => b.Journey)
@@ -71,10 +71,10 @@ namespace TrainReservation.Controllers
             if (journey.AllowSeatReservation) {
                 if (!string.IsNullOrEmpty(SeatsReceived)) {
 
-                    // booking: needed for the BookingID
+                    // journey: needed for the JourneyID
                     // user.Id: authenticated user ID
                     // SeatsReceived: string of seats requested seperated by comma: Ex. "5,2,6"
-                    new Seat().reserveSeats(_context, booking, user.Id, SeatsReceived);
+                    new Seat().reserveSeats(_context, user.Id, booking, journey, SeatsReceived);
                 }
             }
             
@@ -93,7 +93,7 @@ namespace TrainReservation.Controllers
 
             if (Booking.UserID == UserID) {
                 
-                 _context.Bookings.Remove(Booking);
+                _context.Bookings.Remove(Booking);
                 await _context.SaveChangesAsync();
 
             }

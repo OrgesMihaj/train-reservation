@@ -15,6 +15,7 @@ namespace TrainReservation.Models
 
         public virtual AppUser AppUser { get; set; }
         public virtual Journey Journey { get; set; }
+
         public virtual ICollection<Seat> Seats { get; set; }
     }
 }

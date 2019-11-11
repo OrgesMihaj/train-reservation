@@ -75,6 +75,9 @@ li {
 
 /* <Booking styles end here */
 
+.seats-reservation {
+  display: none;
+}
 
 /* <Footer styles start here> */
 .footer {

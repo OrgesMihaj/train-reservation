@@ -228,6 +228,7 @@ namespace TrainReservation.Migrations
                     SeatID = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     UserID = table.Column<string>(nullable: false),
+                    JourneyID = table.Column<int>(nullable: false),
                     BookingID = table.Column<int>(nullable: false),
                     Number = table.Column<int>(nullable: false)
                 },
@@ -240,12 +241,18 @@ namespace TrainReservation.Migrations
                         principalTable: "Bookings",
                         principalColumn: "BookingID",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Seats_Journeys_JourneyID",
+                        column: x => x.JourneyID,
+                        principalTable: "Journeys",
+                        principalColumn: "JourneyID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "f8c2540d-bfce-4533-9baf-98a6a5b726cf", "b02a2a37-a999-4b9f-916d-12bb295b994c", "Admin", "ADMIN" });
+                values: new object[] { "441f7434-4180-4833-bb92-e9ca08d02a4c", "4eabdc46-df8b-48c6-acdf-5eb778847778", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -303,6 +310,11 @@ namespace TrainReservation.Migrations
                 name: "IX_Seats_BookingID",
                 table: "Seats",
                 column: "BookingID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Seats_JourneyID",
+                table: "Seats",
+                column: "JourneyID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
