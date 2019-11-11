@@ -31,7 +31,6 @@ namespace TrainReservation.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
 
-        private readonly 
 
         public BookingsController(ApplicationDbContext context, UserManager<AppUser> userManager)
         {
@@ -55,10 +54,11 @@ namespace TrainReservation.Controllers
         // POST: Bookings/BookJourney
         [HttpPost]
         [ValidateAntiForgeryToken] /* [1] */
-        public async Task<ActionResult> BookJourney([Bind("JourneyID,UserID,Passengers")] Booking booking) { /* [2] */
+        public async Task<ActionResult> BookJourney([Bind("JourneyID,UserID,Passengers")] Booking booking, string SeatsReceived) { /* [2] */
 
             var user = await _userManager.GetUserAsync(HttpContext.User); /* [5] */
             
+            // the journey that is being booked
             Journey journey = _context.Journeys.Single(j => j.JourneyID == booking.JourneyID);
 
             if (ModelState.IsValid) /* [3] */
@@ -66,10 +66,16 @@ namespace TrainReservation.Controllers
                 _context.Add(booking);
             }
             
+            // check if seat(s) reservations are allowed, and if so,
+            // check if a seats reservation request is provided by the user 
             if (journey.AllowSeatReservation) {
-                string SeatsReceived = "3,8,9";
+                if (!string.IsNullOrEmpty(SeatsReceived)) {
 
-                new Seat().reserveSeats(_context, booking, user.Id, SeatsReceived);
+                    // booking: needed for the BookingID
+                    // user.Id: authenticated user ID
+                    // SeatsReceived: string of seats requested seperated by comma: Ex. "5,2,6"
+                    new Seat().reserveSeats(_context, booking, user.Id, SeatsReceived);
+                }
             }
             
             await _context.SaveChangesAsync();

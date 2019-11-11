@@ -23,11 +23,17 @@ namespace TrainReservation.Models {
 
         public virtual Booking Booking { get; set; }
 
+        // Reserve seat(s) for a given booking
         public void reserveSeats(ApplicationDbContext _context, Booking booking, string UserID, string SeatsRequested) {
-
+            
+            // SeatsRequested is given in the format: "{n},{n},{n},"
+            // {n} consists of an integers (INT)
+            // Seperate the string into substrings of {n}
             string[] seats = SeatsRequested.Split(',');
             
             foreach (string seat in seats) {
+
+                // check if the substring {n} is convertible into INT 
                 if (int.TryParse(seat, out int seatNumber)) {
                     
                     Seat s = new Seat();
@@ -39,7 +45,9 @@ namespace TrainReservation.Models {
                     _context.Seats.Add(s);
                 }
             }
+            /* </foreach> */
+            
         }
-        
+
     }
 }
