@@ -41,8 +41,8 @@ namespace TrainReservation.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "3d5dee80-095f-4787-8cca-59e26ea10449",
-                            ConcurrencyStamp = "9ff0a276-a719-42d3-bfe7-5f3e328b5d7e",
+                            Id = "f8c2540d-bfce-4533-9baf-98a6a5b726cf",
+                            ConcurrencyStamp = "b02a2a37-a999-4b9f-916d-12bb295b994c",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -258,7 +258,7 @@ namespace TrainReservation.Migrations
 
                     b.HasIndex("BookingID");
 
-                    b.ToTable("Seat");
+                    b.ToTable("Seats");
                 });
 
             modelBuilder.Entity("TrainReservation.Models.Train", b =>

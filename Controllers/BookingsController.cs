@@ -22,7 +22,7 @@ namespace TrainReservation.Controllers
      *    The default model binder will add some errors for basic type conversion issues 
      *    (for example, passing a non-number for something which is an "int").
      * 4. Asynchronously saves all changes made in this context to the underlying database.
-     * 
+     * 5. Retrieve the current authenticated user.
      */
 
     [Authorize]
@@ -30,6 +30,8 @@ namespace TrainReservation.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
+
+        private readonly 
 
         public BookingsController(ApplicationDbContext context, UserManager<AppUser> userManager)
         {
@@ -41,8 +43,11 @@ namespace TrainReservation.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
-            
-            ViewBag.Bookings = _context.Bookings.Where(b => b.UserID == user.Id).Include(b => b.Journey);
+
+            ViewBag.Bookings = _context.Bookings
+                                       .Where(b => b.UserID == user.Id)
+                                       .Include(b => b.Journey)
+                                       .Include(b => b.Seats);
 
             return View();  
         }
@@ -51,14 +56,23 @@ namespace TrainReservation.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken] /* [1] */
         public async Task<ActionResult> BookJourney([Bind("JourneyID,UserID,Passengers")] Booking booking) { /* [2] */
+
+            var user = await _userManager.GetUserAsync(HttpContext.User); /* [5] */
             
-            string Seats = "3,8,9";
+            Journey journey = _context.Journeys.Single(j => j.JourneyID == booking.JourneyID);
 
             if (ModelState.IsValid) /* [3] */
             {
                 _context.Add(booking);
-                await _context.SaveChangesAsync(); /* [4] */
             }
+            
+            if (journey.AllowSeatReservation) {
+                string SeatsReceived = "3,8,9";
+
+                new Seat().reserveSeats(_context, booking, user.Id, SeatsReceived);
+            }
+            
+            await _context.SaveChangesAsync();
             
             return Redirect("/Bookings");
         }

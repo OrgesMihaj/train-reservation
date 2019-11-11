@@ -9,13 +9,12 @@ namespace TrainReservation.Models
         
         public int BookingID { get; set; }
         public string UserID { get; set; }
-        public AppUser AppUser { get; set; }
-
         public int JourneyID { get; set; }
-        public Journey Journey { get; set; }
-
         public int Passengers { get; set; }
 
+
+        public virtual AppUser AppUser { get; set; }
+        public virtual Journey Journey { get; set; }
         public virtual ICollection<Seat> Seats { get; set; }
     }
 }

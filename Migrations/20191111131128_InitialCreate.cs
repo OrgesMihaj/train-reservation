@@ -200,9 +200,9 @@ namespace TrainReservation.Migrations
                     BookingID = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     UserID = table.Column<string>(nullable: true),
-                    AppUserId = table.Column<string>(nullable: true),
                     JourneyID = table.Column<int>(nullable: false),
-                    Passengers = table.Column<int>(nullable: false)
+                    Passengers = table.Column<int>(nullable: false),
+                    AppUserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -222,7 +222,7 @@ namespace TrainReservation.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Seat",
+                name: "Seats",
                 columns: table => new
                 {
                     SeatID = table.Column<int>(nullable: false)
@@ -233,9 +233,9 @@ namespace TrainReservation.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Seat", x => x.SeatID);
+                    table.PrimaryKey("PK_Seats", x => x.SeatID);
                     table.ForeignKey(
-                        name: "FK_Seat_Bookings_BookingID",
+                        name: "FK_Seats_Bookings_BookingID",
                         column: x => x.BookingID,
                         principalTable: "Bookings",
                         principalColumn: "BookingID",
@@ -245,7 +245,7 @@ namespace TrainReservation.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "3d5dee80-095f-4787-8cca-59e26ea10449", "9ff0a276-a719-42d3-bfe7-5f3e328b5d7e", "Admin", "ADMIN" });
+                values: new object[] { "f8c2540d-bfce-4533-9baf-98a6a5b726cf", "b02a2a37-a999-4b9f-916d-12bb295b994c", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -300,8 +300,8 @@ namespace TrainReservation.Migrations
                 column: "TrainID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Seat_BookingID",
-                table: "Seat",
+                name: "IX_Seats_BookingID",
+                table: "Seats",
                 column: "BookingID");
         }
 
@@ -323,7 +323,7 @@ namespace TrainReservation.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Seat");
+                name: "Seats");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

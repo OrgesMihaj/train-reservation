@@ -28,8 +28,14 @@
                         <div class="booking__details">
                             <p><i class="fas fa-users"></i> Passengers: @booking.Passengers</p>
                             <p>@booking.Journey.DepartureTime - @booking.Journey.ArrivalTime</p>
+
+                            @if (Enumerable.Count(booking.Seats) > 0) {
+                                <p class="booking__seats-reservations">
+                                    <i class="fas fa-chair"></i>
+                                    Seats reserved: @foreach (var Seat in booking.Seats) { <span class="badge badge-warning">@Seat.Number</span>}
+                                </p>
+                            }
                         </div>
-                        
 
                         <form asp-action="CancelBooking" asp-controller="Bookings">
                             <input type="hidden" name="BookingID" value="@booking.BookingID" />

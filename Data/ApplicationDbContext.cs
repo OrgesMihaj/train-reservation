@@ -16,6 +16,8 @@ namespace TrainReservation.Data
         public DbSet<TrainReservation.Models.Journey> Journeys { get; set; }
         public DbSet<TrainReservation.Models.Booking> Bookings { get; set; }
 
+        public DbSet<TrainReservation.Models.Seat> Seats { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -24,8 +26,13 @@ namespace TrainReservation.Data
             // Add your customizations after calling base.OnModelCreating(builder);
 
             modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Name = "Admin", NormalizedName = "Admin".ToUpper() });
-            
+
+
+            // [Booking:Seats] One-to-Many relationship
             modelBuilder.Entity<Booking>().HasMany(c => c.Seats).WithOne(s => s.Booking);
+
+            // [Journey:Booking] One-to-Many relationship
+            modelBuilder.Entity<Journey>().HasMany(j => j.Bookings).WithOne(b => b.Journey);
         }
     }
 }
