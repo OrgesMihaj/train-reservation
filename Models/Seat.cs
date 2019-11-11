@@ -45,7 +45,6 @@ namespace TrainReservation.Models {
                 // check if the substring {n} is convertible into INT 
                 if (int.TryParse(SeatAsString, out int SeatNumber))
                 {
-
                     Seat Seat = new Seat();
 
                     Seat.BookingID = Booking.BookingID;
@@ -55,6 +54,7 @@ namespace TrainReservation.Models {
 
                     Seat CurrentSeat = await GetCurrentSeat(_context, Seat);
 
+                    // if the seat is not taken, then you can reserve it
                     if (CurrentSeat == null)
                     {
                         _context.Seats.Add(Seat);
@@ -65,6 +65,7 @@ namespace TrainReservation.Models {
             
         }
 
+        // Check if there is an exising seat reserved 
         private static async Task<Seat> GetCurrentSeat(ApplicationDbContext _context, Seat Seat)
         {
             return await _context.Seats.FirstOrDefaultAsync(
