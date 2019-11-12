@@ -59,13 +59,12 @@
             }); // </MinusButton>
 
             // TODO: Find the meaning of this shit
-            CapacityPlusOne = parseInt(Capacity) + 1;
+            // CapacityPlusOne = parseInt(Capacity) + 1;
 
             PlusButton.on('click', function () {
-                Passengers += 1;
 
-                if (Passengers <= CapacityPlusOne) {
-
+                if (Passengers <= Capacity) {
+                    Passengers += 1;
                     SetPassengers(Passengers, Capacity);
                 }
             }); // </PlusButton>
