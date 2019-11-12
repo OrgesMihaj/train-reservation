@@ -8,70 +8,117 @@
     var submittionNotAllowed = false; 
 
     // Check if user has already submitted the booking request 
+    // Not very efficient but it works 
     foreach (var booking in @Model.Bookings) {
         if (booking.UserID == @userManager.GetUserId(User)) {
             submittionNotAllowed = true;
         }
     }
+
+    // Number of passengers already booked for the journey.
+    int totalPassengers = 0; 
+
+    // Check each passengers number for each booking.
+    // Sum them up into the `totalPassengers` var.
+    foreach (Booking b in @Model.Bookings) {
+        totalPassengers = totalPassengers + b.Passengers;
+    }
+
+    // Calculate the remaning capacity for a given journey.
+    // In case that a specific train supports 32 passengers (which defines
+    // its capacity), the capacity will be subtracted by the total number 
+    // of passengers that are already booked. 
+    int remainingCapacity = Model.Train.Capacity - totalPassengers - 1;
 }
 
 @section scripts {
     <script>
-        function updatePassengers(passengers, capacity) {
-            $('.passengers__number').text(passengers);
-            $('.passengers__number--input').val(passengers);
+        // Show the current number of passengers selected by the user 
+        let PassengersNumberLabel = $('.passengers__number');
 
-            capacity = capacity - passengers + 1;
+        // Hidden value assigned to the Passengers form control.
+        // Required in order to be sent in the back-end. 
+        let PassengersNumberInput =  $('.passengers__number--input');
+
+        // Provides functions that increment/decrement the passengers value
+        // in the `PassengersNumberLabel` and `PassengersNumberInput`
+        function PassengersControllers(Capacity) {
+
+            let MinusButton = $('.passengers__number--minus'); // +
+            let PlusButton  = $('.passengers__number--plus');  // - 
+
+            let Passengers  = parseInt(PassengersNumberInput.val());
             
-            if (capacity < 0) capacity = 0;
+            MinusButton.on('click', function () {
+                // Decrement only when Passengers is not 1
+                if (Passengers > 1) {
+                    Passengers -= 1;
 
-            $('#capacity').text("(" + capacity + ")");
-
-            $('#price').text("$" + @Model.Price * passengers);
-        }
-
-        function checkPassengersNumber(capacity) {
-            let passengers = parseInt($('.passengers__number--input').val());
-            
-            $('.passengers__number--minus').on('click', function () {
-                if (passengers > 1) passengers -= 1;
-                updatePassengers(passengers, capacity);
-            });
-
-            capacityPlusOne = parseInt(capacity) + 1;
-            $('.passengers__number--plus').on('click', function () {
-                passengers += 1;
-
-                if (passengers <= capacityPlusOne) {
-                    updatePassengers(passengers, capacity);
+                    SetPassengers(Passengers, Capacity);
                 }
-            });
+            }); // </MinusButton>
+
+            // TODO: Find the meaning of this shit
+            CapacityPlusOne = parseInt(Capacity) + 1;
+
+            PlusButton.on('click', function () {
+                Passengers += 1;
+
+                if (Passengers <= CapacityPlusOne) {
+
+                    SetPassengers(Passengers, Capacity);
+                }
+            }); // </PlusButton>
         }
 
-        function checkReserveSeatsCheckbox() {
-            $('#reserveSeatsCheckbox').on('click', function() { 
-                
-                let price = parseInt($('#price').text().replace("$", ""));
+        // Assign passengers number into `PassengersNumberLabel` and
+        // `PassengersNumberInput`. Update the price of booking and the
+        // remaing capacity of the train. 
+        function SetPassengers(Passengers, Capacity) {
 
-                if ($('#reserveSeatsCheckbox').is(':checked')) {
-                    $('.seats-reservation').fadeIn(330);
+            PassengersNumberLabel.text(Passengers);
+            PassengersNumberInput.val(Passengers);
 
-                    $('#price').text("$" + (price + 5));
+            // Remaining capacity
+            // It is defined as a subtraction of train capacity 
+            // and passengers determined by the user who is booking 
+            // the journey including that user (+ 1).  
+            Capacity = Capacity - Passengers + 1;
+            
+            if (Capacity < 0) Capacity = 0;
+
+            // Remaining capacity: output
+            $('#capacity').text("(" + Capacity + ")");
+
+            // Price: output
+            $('#price').text("$" + @Model.Price * Passengers);
+        }
+
+        // Watch if reserve seats checkbox is checked, and if so, 
+        // show seats reservation panel and add the additional price. 
+        function WatchReserveSeatsCheckbox() {
+            let ReserveSeatsCheckbox = $('#reserveSeatsCheckbox')
+            let PriceContainer = $('#price');
+            let SeatsReservationPanel = $('.seats-reservation');
+
+            ReserveSeatsCheckbox.on('click', function() { 
+                let Price = parseInt(PriceContainer.text().replace("$", ""));
+
+                if (ReserveSeatsCheckbox.is(':checked')) {
+                    SeatsReservationPanel.fadeIn(330);
+                    PriceContainer.text("$" + (Price + 5));
                 } else {
-                    $('.seats-reservation').fadeOut(330);
-
-                    $('#price').text("$" + (price - 5));
-
+                    SeatsReservationPanel.fadeOut(330);
+                    PriceContainer.text("$" + (Price - 5));
                 }
-            });
+            }); // </ReserveSeatsCheckbox>
         }
 
         (function () {
-            let capacity = $('#capacity').text().replace('(', '').replace(')', '');
+            let Capacity = $('#capacity').text().replace('(', '').replace(')', '');
 
-            checkPassengersNumber(capacity);
-
-            checkReserveSeatsCheckbox();
+            PassengersControllers(Capacity);
+            WatchReserveSeatsCheckbox();
         })();
     </script>
 }
@@ -108,16 +155,6 @@
                         </div>
 
                         <div class="passengers__max">
-                            @{ 
-                                var totalPassengers = 0; 
-
-                                foreach (Booking b in @Model.Bookings) {
-                                    totalPassengers = totalPassengers + b.Passengers;
-                                }
-
-                                int remainingCapacity = Model.Train.Capacity - totalPassengers - 1;
-                            }
-
                             <small id="capacity">(@remainingCapacity)</small>
                         </div>
                     </div>
@@ -127,14 +164,16 @@
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="reserveSeatsCheckbox">
                         <label class="form-check-label" for="reserveSeatsCheckbox">
-                            Do you want to reserve seats? 
-                            <small>(extra 5$ will be charged)</small>
+                            Do you want to reserve seats? <br>
+                            <small>Extra <strong>5$</strong> will be charged.</small>
                         </label>
                     </div>
                     
                     
-                    <input type="text" name="SeatsReceived" value="3,7,8" />
                     }
+                    <br><br><br>
+
+                    <input type="text" name="SeatsReceived" value="3,7,8" />
 
                     <hr>
 

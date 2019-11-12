@@ -33,7 +33,7 @@
                             @if (Enumerable.Count(booking.Seats) > 0) {
                                 <p class="booking__seats-reservations">
                                     <i class="fas fa-chair"></i>
-                                    Seats reserved: @foreach (var Seat in booking.Seats) { <span class="badge badge-warning">@Seat.Number</span>}
+                                    Reserved seats: @foreach (var Seat in booking.Seats) { <span class="badge badge-warning">@Seat.Number</span>}
                                 </p>
                             }
                         </div>
