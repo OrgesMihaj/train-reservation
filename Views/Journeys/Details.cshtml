@@ -17,38 +17,61 @@
 
 @section scripts {
     <script>
-        function updatePassengers(passengers) {
+        function updatePassengers(passengers, capacity) {
             $('.passengers__number').text(passengers);
             $('.passengers__number--input').val(passengers);
+
+            capacity = capacity - passengers + 1;
             
+            if (capacity < 0) capacity = 0;
+
+            $('#capacity').text("(" + capacity + ")");
+
             $('#price').text("$" + @Model.Price * passengers);
         }
 
-        function checkPassengersNumber() {
+        function checkPassengersNumber(capacity) {
             let passengers = parseInt($('.passengers__number--input').val());
             
             $('.passengers__number--minus').on('click', function () {
                 if (passengers > 1) passengers -= 1;
-                updatePassengers(passengers);
+                updatePassengers(passengers, capacity);
             });
 
+            capacityPlusOne = parseInt(capacity) + 1;
             $('.passengers__number--plus').on('click', function () {
                 passengers += 1;
 
-                updatePassengers(passengers);
+                if (passengers <= capacityPlusOne) {
+                    updatePassengers(passengers, capacity);
+                }
+            });
+        }
+
+        function checkReserveSeatsCheckbox() {
+            $('#reserveSeatsCheckbox').on('click', function() { 
+                
+                let price = parseInt($('#price').text().replace("$", ""));
+
+                if ($('#reserveSeatsCheckbox').is(':checked')) {
+                    $('.seats-reservation').fadeIn(330);
+
+                    $('#price').text("$" + (price + 5));
+                } else {
+                    $('.seats-reservation').fadeOut(330);
+
+                    $('#price').text("$" + (price - 5));
+
+                }
             });
         }
 
         (function () {
-            checkPassengersNumber();
+            let capacity = $('#capacity').text().replace('(', '').replace(')', '');
 
-            $('#reserveSeatsCheckbox').on('click', function() { 
-                if ($('#reserveSeatsCheckbox').is(':checked')) {
-                    $('.seats-reservation').fadeIn(330);
-                } else {
-                    $('.seats-reservation').fadeOut(330);
-                }
-            });
+            checkPassengersNumber(capacity);
+
+            checkReserveSeatsCheckbox();
         })();
     </script>
 }
@@ -83,9 +106,24 @@
                             <div class="passengers__number">1</div>
                             <div class="passengers__number--plus"><span class="plus">+</span></div>
                         </div>
+
+                        <div class="passengers__max">
+                            @{ 
+                                var totalPassengers = 0; 
+
+                                foreach (Booking b in @Model.Bookings) {
+                                    totalPassengers = totalPassengers + b.Passengers;
+                                }
+
+                                int remainingCapacity = Model.Train.Capacity - totalPassengers - 1;
+                            }
+
+                            <small id="capacity">(@remainingCapacity)</small>
+                        </div>
                     </div>
                      <!-- </Booking form: Passengers> -->
 
+                    @if (@Model.AllowSeatReservation) {
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="reserveSeatsCheckbox">
                         <label class="form-check-label" for="reserveSeatsCheckbox">
@@ -93,12 +131,14 @@
                             <small>(extra 5$ will be charged)</small>
                         </label>
                     </div>
-
+                    
+                    
                     <input type="text" name="SeatsReceived" value="3,7,8" />
+                    }
 
                     <hr>
 
-                    <input type="number" name="Passengers" class="passengers__number--input" min="1" max="100" value="1" hidden />
+                    <input type="number" name="Passengers" class="passengers__number--input" min="1" max="@remainingCapacity" value="1" hidden />
                     <input type="hidden" name="JourneyID" value="@Model.JourneyID" />
                     <input type="hidden" name="UserID" value="@userManager.GetUserId(User)" />
 

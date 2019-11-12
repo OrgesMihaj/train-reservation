@@ -38,6 +38,7 @@ li {
 		border-radius: 2px;
 		border: 2px solid #2B282A;
 		display: flex;
+		margin-right: 1rem;
 		height: 25px;
 		text-align: center;
 	}
@@ -68,8 +69,6 @@ li {
 	.passengers__number--plus:hover {
 		background: #DB9D47;
 		color: #fff;
-		
-
 	}
 
 

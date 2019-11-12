@@ -48,6 +48,7 @@ namespace TrainReservation.Controllers
                                        .Include(b => b.Journey)
                                        .Include(b => b.Seats);
 
+
             return View();  
         }
 
@@ -59,26 +60,45 @@ namespace TrainReservation.Controllers
             var user = await _userManager.GetUserAsync(HttpContext.User); /* [5] */
             
             // the journey that is being booked
-            Journey journey = _context.Journeys.Single(j => j.JourneyID == booking.JourneyID);
+            Journey journey = _context.Journeys.Include(j => j.Train).Single(j => j.JourneyID == booking.JourneyID);
+
+            Booking[] bookings = _context.Bookings.ToArray();
+            
+            int TotalPassengers = 0;
+
+            foreach (Booking b in bookings) {
+                TotalPassengers = TotalPassengers + b.Passengers;
+            }
 
             if (ModelState.IsValid) /* [3] */
             {
                 _context.Add(booking);
             }
-            
-            // check if seat(s) reservations are allowed, and if so,
-            // check if a seats reservation request is provided by the user 
-            if (journey.AllowSeatReservation) {
-                if (!string.IsNullOrEmpty(SeatsReceived)) {
 
-                    // journey: needed for the JourneyID
-                    // user.Id: authenticated user ID
-                    // SeatsReceived: string of seats requested seperated by comma: Ex. "5,2,6"
-                    new Seat().reserveSeats(_context, user.Id, booking, journey, SeatsReceived);
+            int SeatsTaken = TotalPassengers + booking.Passengers;
+            int TrainCapacity = journey.Train.Capacity;
+
+            if (SeatsTaken <= TrainCapacity) {
+
+                // check if seat(s) reservations are allowed, and if so,
+                // check if a seats reservation request is provided by the user 
+                if (journey.AllowSeatReservation) {
+                    if (!string.IsNullOrEmpty(SeatsReceived)) {
+
+                        // journey: needed for the JourneyID
+                        // user.Id: authenticated user ID
+                        // SeatsReceived: string of seats requested seperated by comma: Ex. "5,2,6"
+                        new Seat().reserveSeats(_context, user.Id, booking, journey, SeatsReceived);
+                    }
                 }
+
+                await _context.SaveChangesAsync();
+            } else {
+                ViewBag.Error = "The number of passangers requested exceeds the capacity of the train.";
+
+                return Redirect("/Journeys/Details/" + journey.JourneyID);
             }
             
-            await _context.SaveChangesAsync();
             
             return Redirect("/Bookings");
         }
@@ -96,7 +116,7 @@ namespace TrainReservation.Controllers
                 _context.Bookings.Remove(Booking);
                 await _context.SaveChangesAsync();
 
-            }
+            } 
 
             return Redirect("/Bookings");
         }

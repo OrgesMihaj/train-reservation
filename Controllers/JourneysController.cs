@@ -43,6 +43,7 @@ namespace TrainReservation.Controllers
                 .Include(j => j.Train)
                 .Include(j => j.Bookings)
                 .FirstOrDefaultAsync(m => m.JourneyID == id);
+
             if (journey == null)
             {
                 return NotFound();

@@ -40,6 +40,7 @@ namespace TrainReservation.Models {
             // Seperate the string into substrings of {n}
             string[] seats = SeatsRequested.Split(',');
 
+            
             foreach (string SeatAsString in seats) {
 
                 // check if the substring {n} is convertible into INT 
