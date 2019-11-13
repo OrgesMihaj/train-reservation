@@ -75,11 +75,10 @@
                             }
                         });
 
-                        Passengers -= 1;
-
                         UpdateSeatsReceived(SelectedSeatsArray);
-                    }
+                    } 
 
+                    Passengers -= 1;
 
                     SetPassengers(Passengers, Capacity);
                 }
@@ -341,12 +340,9 @@
                             <div></div>
                         }
 
+                        // Empty row
                         @if (i % 16 == 0) {
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                            <div></div>
+                            <div></div><div></div><div></div><div></div><div></div>
                         }
                     }
                 </div>
