@@ -29,6 +29,8 @@
     // its capacity), the capacity will be subtracted by the total number 
     // of passengers that are already booked. 
     int RemainingCapacity = Model.Train.Capacity - TotalPassengers - 1;
+
+    int PassengersInputMaximum = RemainingCapacity + 1;
 }
 
 @section scripts {
@@ -77,6 +79,8 @@
 
             PassengersNumberLabel.text(Passengers);
             PassengersNumberInput.val(Passengers);
+
+            console.log(PassengersNumberInput.val());
 
             // Remaining capacity
             // It is defined as a subtraction of train capacity 
@@ -244,12 +248,13 @@
                     
                     }
 
+                    <hr>
 
-                    <input type="number" name="Passengers" class="passengers__number--input" min="1" max="@RemainingCapacity" value="1" hidden />
+
+                    <input type="number" name="Passengers" class="passengers__number--input" min="1" max="@PassengersInputMaximum" value="1" hidden />
                     <input type="hidden" name="JourneyID" value="@Model.JourneyID" />
                     <input type="hidden" name="UserID" value="@userManager.GetUserId(User)" />
-                    <input type="hidden"   name="SeatsReceived" value="0" id="seatsReceived" />
-
+                    <input type="hidden" name="SeatsReceived" value="0" id="seatsReceived" />
 
                     <input type="submit" value="Book" class="btn btn-sm btn-dark" disabled="@SubmittionNotAllowed">
 
