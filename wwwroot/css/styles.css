@@ -74,10 +74,12 @@ li {
 
 /* <Booking styles end here */
 
+
 .seats-reservation {
   display: none;
 }
 
+/* <Train mockup styles start here */
 .train {
 	display: grid;
 	grid-template-columns: 40px 40px 40px 40px;
@@ -102,10 +104,14 @@ li {
 		color: #fff;
 	}
 
-	.train__seat--disable {
-		background: #e3e3e3;
+	.train__seat--taken {
+		background: #EA6565;
+		border: 3px solid #EA6565;
+		color: #fff;
 		cursor: default;	
 	}
+/* </Train mockup styles start here */
+
 
 /* <Footer styles start here> */
 .footer {

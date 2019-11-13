@@ -59,11 +59,13 @@
             MinusButton.on('click', function () {
                 // Decrement only when Passengers is not 1
                 if (Passengers > 1) {
-                    Passengers -= 1;
+                    
+                    // check if all passengers have a reserved seat
+                    if (SelectedSeatsArray.length > 0 && SelectedSeatsArray.length == Passengers) {
 
-                    if (SelectedSeatsArray.length > 0 && SelectedSeatsArray.length == (Passengers + 1)) {
+                        // if the number of passengers is decreased by one, remove the last reserved 
+                        // seat form the `SelectedSeatsArray`
                         let LastSeatReserved = SelectedSeatsArray[SelectedSeatsArray.length - 1];
-
                         SelectedSeatsArray.splice(SelectedSeatsArray.indexOf(LastSeatReserved), 1);
 
                         $('.train__seat').each(function () {
@@ -72,6 +74,8 @@
                                 SelectedSeatCounter--;
                             }
                         });
+
+                        Passengers -= 1;
 
                         UpdateSeatsReceived(SelectedSeatsArray);
                     }
@@ -267,7 +271,7 @@
                     <input type="hidden" name="UserID" value="@userManager.GetUserId(User)" />
                     <input type="hidden" name="SeatsReceived" value="0" id="seatsReceived" />
 
-                    <input type="submit" value="Book" class="btn btn-sm btn-dark" disabled="@SubmittionNotAllowed">
+                    <input type="submit" value="Pay" class="btn btn-sm btn-dark" disabled="@SubmittionNotAllowed">
 
                     <a class="btn btn-sm btn-light ml-2" href="/home">Travel</a> 
                 </form>
@@ -288,12 +292,20 @@
                 <p>If you do not select any seat the system will automatically select for you.</p>
                 
                 <div class="train">
-
-                    @for (int i = 1; i <= Model.Train.Capacity; i++) {
-                        <div class="train__seat">@i</div> 
-                    }
-
                     
+                    @for (int i = 1; i <= Model.Train.Capacity; i++) {
+                        var SeatIsTaken = false; 
+
+                        @foreach(var seat in Model.Seats) {
+                            @if (seat.Number != i) {continue;}
+                            <div class="train__seat train__seat--taken">@i</div> 
+                            SeatIsTaken = true; 
+                        }
+
+                        @if (!SeatIsTaken) {
+                            <div class="train__seat">@i</div> 
+                        }
+                    }
                 </div>
                 
             </div>
