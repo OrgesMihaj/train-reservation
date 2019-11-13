@@ -296,13 +296,22 @@
                     @for (int i = 1; i <= Model.Train.Capacity; i++) {
                         var SeatIsTaken = false; 
 
+                        // Get the list of seats taken in this journey.
                         @foreach(var seat in Model.Seats) {
+
+                            // If the current seat in the loop is not taken just
+                            // continue to the next one.
                             @if (seat.Number != i) {continue;}
+
+                            // If the seat is taken add it in the UI with `train__seat--taken`
+                            // class assigned which  will change the appearance of the seat.
                             <div class="train__seat train__seat--taken">@i</div> 
                             SeatIsTaken = true; 
                         }
-
+                        
                         @if (!SeatIsTaken) {
+                            // If the seat is not taken add it as a normal seat which can be
+                            // taken by users who want to reserve 
                             <div class="train__seat">@i</div> 
                         }
                     }
