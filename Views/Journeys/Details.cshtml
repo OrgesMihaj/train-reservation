@@ -116,6 +116,8 @@
             // Remaining capacity: output
             $('#capacity').text("(" + Capacity + ")");
 
+            SetSeatsReservationAvailability(SelectedSeatCounter);
+
             // Price: output
             $('#price').text("$" + @Model.Price * Passengers);
         } // </SetPassengers>
@@ -202,8 +204,14 @@
                         UpdateSeatsReceived(SelectedSeatsArray);
                     }
                 }
+
+                SetSeatsReservationAvailability(SelectedSeatsArray.length);
             }); // </Seat>
         } // </ReserveSeats>
+
+        function SetSeatsReservationAvailability(ReservedSeats) {
+            $(".seatsAvailable").text(ReservedSeats + "/" + PassengersNumberInput.val());
+        }
 
         // INITIAL POINT
         (function () {
@@ -259,7 +267,7 @@
                         <input class="form-check-input" type="checkbox" value="" id="reserveSeatsCheckbox">
                         <label class="form-check-label" for="reserveSeatsCheckbox">
                             Do you want to reserve seats? <br>
-                            <small>Extra <strong>5$</strong> will be charged.</small>
+                            <small>Extra <strong>5$</strong> will be charged per seat.</small>
                         </label>
                     </div>
                     }
@@ -288,9 +296,9 @@
     <div class="col-md-5">
         <div class="seats-reservation card">
             <div class="card-body">
-                <h4>Select your seat(s)</h4>
+                <h4>Select your seat(s) <small class="seatsAvailable badge">0/1</small></h4>
                 <p>If you do not select any seat the system will automatically select for you.</p>
-                
+
                 <div class="train">
                     
                     @for (int i = 1; i <= Model.Train.Capacity; i++) {
