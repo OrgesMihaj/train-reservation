@@ -75,6 +75,8 @@ namespace TrainReservation.Controllers
                 _context.Add(booking);
             }
 
+
+
             int SeatsTaken = TotalPassengers + booking.Passengers;
             int TrainCapacity = journey.Train.Capacity;
 
@@ -83,6 +85,10 @@ namespace TrainReservation.Controllers
                 // check if seat(s) reservations are allowed, and if so,
                 // check if a seats reservation request is provided by the user 
                 if (journey.AllowSeatReservation) {
+                    
+                    // Default state of `SeatsReceived` input in the client-side is 0 
+                    if (SeatsReceived == "0") SeatsReceived = null;
+
                     if (!string.IsNullOrEmpty(SeatsReceived)) {
 
                         // journey: needed for the JourneyID
@@ -98,6 +104,7 @@ namespace TrainReservation.Controllers
 
                 return Redirect("/Journeys/Details/" + journey.JourneyID);
             }
+            
             
             
             return Redirect("/Bookings");

@@ -42,6 +42,7 @@ namespace TrainReservation.Controllers
             var journey = await _context.Journeys
                 .Include(j => j.Train)
                 .Include(j => j.Bookings)
+                .Include(j => j.Seats)
                 .FirstOrDefaultAsync(m => m.JourneyID == id);
 
             if (journey == null)

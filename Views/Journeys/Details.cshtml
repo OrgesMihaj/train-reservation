@@ -5,30 +5,30 @@
 @{
     ViewData["Title"] = "Book your next yourney";
 
-    var submittionNotAllowed = false; 
+    var SubmittionNotAllowed = false; 
 
     // Check if user has already submitted the booking request 
     // Not very efficient but it works 
-    foreach (var booking in @Model.Bookings) {
-        if (booking.UserID == @userManager.GetUserId(User)) {
-            submittionNotAllowed = true;
+    foreach (var Booking in @Model.Bookings) {
+        if (Booking.UserID == @userManager.GetUserId(User)) {
+            SubmittionNotAllowed = true;
         }
     }
 
     // Number of passengers already booked for the journey.
-    int totalPassengers = 0; 
+    int TotalPassengers = 0; 
 
     // Check each passengers number for each booking.
-    // Sum them up into the `totalPassengers` var.
+    // Sum them up into the `TotalPassengers` var.
     foreach (Booking b in @Model.Bookings) {
-        totalPassengers = totalPassengers + b.Passengers;
+        TotalPassengers = TotalPassengers + b.Passengers;
     }
 
     // Calculate the remaning capacity for a given journey.
     // In case that a specific train supports 32 passengers (which defines
     // its capacity), the capacity will be subtracted by the total number 
     // of passengers that are already booked. 
-    int remainingCapacity = Model.Train.Capacity - totalPassengers - 1;
+    int RemainingCapacity = Model.Train.Capacity - TotalPassengers - 1;
 }
 
 @section scripts {
@@ -68,7 +68,7 @@
                     SetPassengers(Passengers, Capacity);
                 }
             }); // </PlusButton>
-        }
+        } // </PassengersControllers>
 
         // Assign passengers number into `PassengersNumberLabel` and
         // `PassengersNumberInput`. Update the price of booking and the
@@ -91,7 +91,7 @@
 
             // Price: output
             $('#price').text("$" + @Model.Price * Passengers);
-        }
+        } // </SetPassengers>
 
         // Watch if reserve seats checkbox is checked, and if so, 
         // show seats reservation panel and add the additional price. 
@@ -111,13 +111,87 @@
                     PriceContainer.text("$" + (Price - 5));
                 }
             }); // </ReserveSeatsCheckbox>
-        }
+        } // </WatchReserveSeatsCheckbox>
 
+        // The `SelectedSeatsArray` needs to be converted to string 
+        // in order to be send into the back-end 
+        function UpdateSeatsReceived(SelectedSeatsArray) {
+            let SelectedSeatString = "";
+
+            // convert to string
+            SelectedSeatsArray.forEach(function (seat) {
+                SelectedSeatString += seat + ",";
+            });
+
+            // remove the last comma 
+            SelectedSeatString = SelectedSeatString.substring(0, SelectedSeatString.lastIndexOf(","));
+
+            $("#seatsReceived").val(SelectedSeatString);
+        } // </UpdateSeatsReceived>
+
+        // Reserve Seats based on passengers number 
+        function ReserveSeats() {
+            let Seat = $('.train__seat');
+
+            // A string of selected seats divided by comma Ex. "3,4,5,".
+            let SelectedSeat = "";
+            
+            let SelectedSeatsArray = [];
+
+            // How many seats are already selected?
+            let SelectedSeatCounter = 0;
+
+            // Default number of passengers.
+            let PassengersNumber = 1;
+
+            Seat.on('click', function() {
+                let ClickedSeat = $(this);
+                let ClickedSeatNumber = parseInt(ClickedSeat.text());
+
+                // if seat is already selected
+                if (ClickedSeat.hasClass("train__seat--selected")) {
+                    
+                    // remove the selected seat number from the `SelectedSeatsArray`
+                    SelectedSeatsArray.splice(SelectedSeatsArray.indexOf(ClickedSeatNumber), 1);
+
+                    SelectedSeatCounter--;
+
+                    ClickedSeat.removeClass("train__seat--selected");
+                    
+                } else {
+                    // Check passengers number after each click.
+                    PassengersNumber = PassengersNumberInput.val();
+
+                    // Make sure that the number of reserved seats does not
+                    // exceeds the number of passengers booked.  
+                    if (PassengersNumber > SelectedSeatCounter) {
+                        SelectedSeatCounter++;
+
+                        SeatNumber = parseInt(ClickedSeat.text());
+
+                        // add the seat number into the `SelectedSeatsArray`
+                        SelectedSeatsArray.push(SeatNumber); 
+
+                        // making sure no duplicates
+                        SelectedSeatsArray = Array.from(new Set(SelectedSeatsArray));
+
+                        ClickedSeat.addClass("train__seat--selected");
+                        
+
+                        UpdateSeatsReceived(SelectedSeatsArray);
+                    }
+                }
+            }); // </Seat>
+        } // </ReserveSeats>
+
+        // INITIAL POINT
         (function () {
             let Capacity = $('#capacity').text().replace('(', '').replace(')', '');
 
             PassengersControllers(Capacity);
             WatchReserveSeatsCheckbox();
+
+            ReserveSeats();  
         })();
     </script>
 }
@@ -154,7 +228,7 @@
                         </div>
 
                         <div class="passengers__max">
-                            <small id="capacity">(@remainingCapacity)</small>
+                            <small id="capacity">(@RemainingCapacity)</small>
                         </div>
                     </div>
                      <!-- </Booking form: Passengers> -->
@@ -168,19 +242,16 @@
                         </label>
                     </div>
                     
-                    
                     }
-                    <br><br><br>
 
-                    <input type="text" name="SeatsReceived" value="3,7,8" />
 
-                    <hr>
-
-                    <input type="number" name="Passengers" class="passengers__number--input" min="1" max="@remainingCapacity" value="1" hidden />
+                    <input type="number" name="Passengers" class="passengers__number--input" min="1" max="@RemainingCapacity" value="1" hidden />
                     <input type="hidden" name="JourneyID" value="@Model.JourneyID" />
                     <input type="hidden" name="UserID" value="@userManager.GetUserId(User)" />
+                    <input type="hidden"   name="SeatsReceived" value="0" id="seatsReceived" />
 
-                    <input type="submit" value="Book" class="btn btn-sm btn-dark" disabled="@submittionNotAllowed">
+
+                    <input type="submit" value="Book" class="btn btn-sm btn-dark" disabled="@SubmittionNotAllowed">
 
                     <a class="btn btn-sm btn-light ml-2" href="/home">Travel</a> 
                 </form>
@@ -199,7 +270,15 @@
             <div class="card-body">
                 <h4>Select your seat(s)</h4>
                 <p>If you do not select any seat the system will automatically select for you.</p>
+                
+                <div class="train">
 
+                    @for (int i = 1; i <= Model.Train.Capacity; i++) {
+                        <div class="train__seat">@i</div> 
+                    }
+
+                    
+                </div>
                 
             </div>
         </div> 
