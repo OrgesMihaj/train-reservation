@@ -35,12 +35,17 @@
 
 @section scripts {
     <script>
+        let SelectedSeatsArray = [];
+
         // Show the current number of passengers selected by the user 
         let PassengersNumberLabel = $('.passengers__number');
 
         // Hidden value assigned to the Passengers form control.
         // Required in order to be sent in the back-end. 
         let PassengersNumberInput =  $('.passengers__number--input');
+
+        // How many seats are already selected?
+        let SelectedSeatCounter = 0;
 
         // Provides functions that increment/decrement the passengers value
         // in the `PassengersNumberLabel` and `PassengersNumberInput`
@@ -55,6 +60,20 @@
                 // Decrement only when Passengers is not 1
                 if (Passengers > 1) {
                     Passengers -= 1;
+
+                    if (SelectedSeatsArray.length > 0 && SelectedSeatsArray.length == (Passengers + 1)) {
+                        let LastSeatReserved = SelectedSeatsArray[SelectedSeatsArray.length - 1];
+
+                        SelectedSeatsArray.splice(SelectedSeatsArray.indexOf(LastSeatReserved), 1);
+
+                        $('.train__seat').each(function () {
+                            if ($(this).hasClass('train__seat--selected') && parseInt($(this).text()) == LastSeatReserved) {
+                                $(this).removeClass('train__seat--selected');
+                                SelectedSeatCounter--;
+                            }
+                        });
+                    }
+
 
                     SetPassengers(Passengers, Capacity);
                 }
@@ -79,8 +98,6 @@
 
             PassengersNumberLabel.text(Passengers);
             PassengersNumberInput.val(Passengers);
-
-            console.log(PassengersNumberInput.val());
 
             // Remaining capacity
             // It is defined as a subtraction of train capacity 
@@ -139,11 +156,6 @@
 
             // A string of selected seats divided by comma Ex. "3,4,5,".
             let SelectedSeat = "";
-            
-            let SelectedSeatsArray = [];
-
-            // How many seats are already selected?
-            let SelectedSeatCounter = 0;
 
             // Default number of passengers.
             let PassengersNumber = 1;
@@ -181,7 +193,6 @@
 
                         ClickedSeat.addClass("train__seat--selected");
                         
-
                         UpdateSeatsReceived(SelectedSeatsArray);
                     }
                 }
@@ -245,11 +256,9 @@
                             <small>Extra <strong>5$</strong> will be charged.</small>
                         </label>
                     </div>
-                    
                     }
 
                     <hr>
-
 
                     <input type="number" name="Passengers" class="passengers__number--input" min="1" max="@PassengersInputMaximum" value="1" hidden />
                     <input type="hidden" name="JourneyID" value="@Model.JourneyID" />
