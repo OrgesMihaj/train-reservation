@@ -116,10 +116,10 @@
             // Remaining capacity: output
             $('#capacity').text("(" + Capacity + ")");
 
-            SetSeatsReservationAvailability(SelectedSeatCounter);
+            ShowSeatsReservationAvailability(SelectedSeatCounter);
 
             // Price: output
-            $('#price').text("$" + @Model.Price * Passengers);
+            SetPrice(@Model.Price * Passengers);
         } // </SetPassengers>
 
         // Watch if reserve seats checkbox is checked, and if so, 
@@ -182,6 +182,7 @@
 
                     ClickedSeat.removeClass("train__seat--selected");
                     
+                    SetPrice(GetCurrentPrice() - 5);
                 } else {
                     // Check passengers number after each click.
                     PassengersNumber = PassengersNumberInput.val();
@@ -202,15 +203,25 @@
                         ClickedSeat.addClass("train__seat--selected");
                         
                         UpdateSeatsReceived(SelectedSeatsArray);
+
+                        SetPrice(GetCurrentPrice() + 5);
                     }
                 }
 
-                SetSeatsReservationAvailability(SelectedSeatsArray.length);
+                ShowSeatsReservationAvailability(SelectedSeatsArray.length);
             }); // </Seat>
         } // </ReserveSeats>
 
-        function SetSeatsReservationAvailability(ReservedSeats) {
+        function ShowSeatsReservationAvailability(ReservedSeats) {
             $(".seatsAvailable").text(ReservedSeats + "/" + PassengersNumberInput.val());
+        }
+
+        function GetCurrentPrice() {
+            return parseInt($('#price').text().replace('$', ''));
+        }
+
+        function SetPrice(price) {
+            $('#price').text("$" + price);
         }
 
         // INITIAL POINT
