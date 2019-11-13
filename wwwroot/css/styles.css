@@ -76,14 +76,17 @@ li {
 
 
 .seats-reservation {
-  display: none;
+	display: none;
+	height: 75vh;
+	overflow-y: auto;
 }
 
 /* <Train mockup styles start here */
 .train {
 	display: grid;
-	grid-template-columns: 40px 40px 40px 40px;
-	grid-template-rows: 40px 40px 40px 40px;
+	grid-template-columns: 40px 40px 20px 40px 40px;
+	grid-template-rows:  minmax(min-content, max-content);
+	
 	grid-gap: 10px 10px; 
 }
 	.train__seat {

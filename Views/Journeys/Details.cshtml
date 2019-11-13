@@ -313,6 +313,7 @@
                 <div class="train">
                     
                     @for (int i = 1; i <= Model.Train.Capacity; i++) {
+                        
                         var SeatIsTaken = false; 
 
                         // Get the list of seats taken in this journey.
@@ -327,11 +328,25 @@
                             <div class="train__seat train__seat--taken">@i</div> 
                             SeatIsTaken = true; 
                         }
+
                         
                         @if (!SeatIsTaken) {
                             // If the seat is not taken add it as a normal seat which can be
                             // taken by users who want to reserve 
                             <div class="train__seat">@i</div> 
+                        }
+
+                        // Empty colomn betwen seats
+                        @if (i % 2 == 0 && i % 4 != 0) {
+                            <div></div>
+                        }
+
+                        @if (i % 16 == 0) {
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
                         }
                     }
                 </div>
