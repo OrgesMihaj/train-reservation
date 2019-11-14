@@ -75,8 +75,6 @@ namespace TrainReservation.Controllers
                 _context.Add(booking);
             }
 
-
-
             int SeatsTaken = TotalPassengers + booking.Passengers;
             int TrainCapacity = journey.Train.Capacity;
 
@@ -100,12 +98,8 @@ namespace TrainReservation.Controllers
 
                 await _context.SaveChangesAsync();
             } else {
-                ViewBag.Error = "The number of passangers requested exceeds the capacity of the train.";
-
                 return Redirect("/Journeys/Details/" + journey.JourneyID);
             }
-            
-            
             
             return Redirect("/Bookings");
         }
