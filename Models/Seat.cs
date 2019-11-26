@@ -32,7 +32,7 @@ namespace TrainReservation.Models {
 
         // Reserve seat(s) for a given booking
         public async void reserveSeats(
-            ApplicationDbContext _context, string UserID, Booking Booking, Journey Journey, string SeatsRequested) 
+            ApplicationDbContext _context, string UserID, int BookingID, int JourneyID, string SeatsRequested) 
         {
             
             // SeatsRequested is given in the format: "{n},{n},{n},"
@@ -48,8 +48,8 @@ namespace TrainReservation.Models {
                 {
                     Seat Seat = new Seat();
 
-                    Seat.BookingID = Booking.BookingID;
-                    Seat.JourneyID = Journey.JourneyID;
+                    Seat.BookingID = BookingID;
+                    Seat.JourneyID = JourneyID;
                     Seat.UserID = UserID;
                     Seat.Number = SeatNumber;
 
@@ -60,6 +60,7 @@ namespace TrainReservation.Models {
                     {
                         _context.Seats.Add(Seat);
                     }
+                    
                 }
             }
             /* </foreach> */

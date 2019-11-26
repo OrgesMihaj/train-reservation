@@ -13,7 +13,6 @@
     
     // Bookings list starts here 
     @foreach (var booking in ViewBag.Bookings) {
-        var bookingTotalPrice = booking.Journey.Price * booking.Passengers;
 
         <div class="row mb-5">
             <div class="col-md-6">
@@ -23,7 +22,7 @@
                         
                         <h3 class="booking__title">
                             <strong>@booking.Journey.Departure - @booking.Journey.Destination</strong>
-                            <span class="badge badge-success">$@bookingTotalPrice</span>
+                            <span class="badge badge-success">$@booking.Cost</span>
                         </h3>
 
                         <div class="booking__details">

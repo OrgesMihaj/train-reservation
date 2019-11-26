@@ -226,11 +226,26 @@
         // INITIAL POINT
         (function () {
             let Capacity = $('#capacity').text().replace('(', '').replace(')', '');
+            let showPaymentForm = false;
+            let paymentCard = $('.payment-card');
 
             PassengersControllers(Capacity);
             WatchReserveSeatsCheckbox();
 
             ReserveSeats();  
+
+            paymentCard.hide();
+
+            $('#payButton').on('click', function () {
+                if (showPaymentForm) {
+                    paymentCard.fadeOut(330);
+                    showPaymentForm = false;
+                } else {
+                    paymentCard.fadeIn(330);
+                    showPaymentForm = true;
+                }
+            });
+
         })();
     </script>
 }
@@ -251,49 +266,39 @@
                 <p class="mb-0"><i class="fas fa-train"></i> @Model.Train.Name</p>
                 <!-- </Booking details> -->
                 
-                <!-- <Booking form> -->
-                <form asp-action="BookJourney" asp-controller="Bookings">
-
-                    <!-- <Booking form: Passengers> -->
-                    <div class="passengers">
-                        <div for="Passengers" class="passengers__title">
-                            <i class="fas fa-users"></i> How many passengers?
-                        </div>
-
-                        <div class="passengers__control">
-                            <div class="passengers__number--minus"><span class="minus">-</span></div>
-                            <div class="passengers__number">1</div>
-                            <div class="passengers__number--plus"><span class="plus">+</span></div>
-                        </div>
-
-                        <div class="passengers__max">
-                            <small id="capacity">(@RemainingCapacity)</small>
-                        </div>
+                <!-- <Booking form: Passengers> -->
+                <div class="passengers">
+                    <div for="Passengers" class="passengers__title">
+                        <i class="fas fa-users"></i> How many passengers?
                     </div>
-                     <!-- </Booking form: Passengers> -->
 
-                    @if (@Model.AllowSeatReservation) {
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="reserveSeatsCheckbox">
-                        <label class="form-check-label" for="reserveSeatsCheckbox">
-                            Do you want to reserve seats? <br>
-                            <small>Extra <strong>5$</strong> will be charged per seat.</small>
-                        </label>
+                    <div class="passengers__control">
+                        <div class="passengers__number--minus"><span class="minus">-</span></div>
+                        <div class="passengers__number">1</div>
+                        <div class="passengers__number--plus"><span class="plus">+</span></div>
                     </div>
-                    }
 
-                    <hr>
+                    <div class="passengers__max">
+                        <small id="capacity">(@RemainingCapacity)</small>
+                    </div>
+                </div>
+                    <!-- </Booking form: Passengers> -->
 
-                    <input type="number" name="Passengers" class="passengers__number--input" min="1" max="@PassengersInputMaximum" value="1" hidden />
-                    <input type="hidden" name="JourneyID" value="@Model.JourneyID" />
-                    <input type="hidden" name="UserID" value="@userManager.GetUserId(User)" />
-                    <input type="hidden" name="SeatsReceived" value="0" id="seatsReceived" />
+                @if (@Model.AllowSeatReservation) {
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="reserveSeatsCheckbox">
+                    <label class="form-check-label" for="reserveSeatsCheckbox">
+                        Do you want to reserve seats? <br>
+                        <small>Extra <strong>5$</strong> will be charged per seat.</small>
+                    </label>
+                </div>
+                }
 
-                    <input type="submit" value="Pay" class="btn btn-sm btn-dark" disabled="@SubmittionNotAllowed">
+                <hr>
 
-                    <a class="btn btn-sm btn-light ml-2" href="/home">Travel</a> 
-                </form>
-                <!-- </Booking form> -->
+                <button class="btn btn-sm btn-dark" id="payButton">Pay</button>
+
+                <a class="btn btn-sm btn-light ml-2" href="/home">Travel</a> 
 
             </div> <!-- </card-body> -->
         </div> <!-- </card> -->
@@ -301,7 +306,7 @@
         <br><br>
 
         <!-- Payment section starts here -->
-        <div class="card">
+        <div class="card payment-card">
             <div class="card-body">
                     
                 <div class="bg-white rounded-lg">
@@ -314,7 +319,7 @@
                         </li>
                         <li class="nav-item">
                             <a data-toggle="pill" href="#nav-tab-paypal" class="nav-link rounded-pill">
-                                <i class="fa fa-paypal"></i> Paypal
+                                <i class="fab fa-paypal"></i> Paypal
                             </a>
                         </li>
                         <li class="nav-item">
@@ -327,34 +332,34 @@
 
                     <!-- Credit card form content -->
                     <div class="tab-content">
-
-                        <!-- credit card info-->
+                        
                         <div id="nav-tab-card" class="tab-pane fade show active">
-                            <form role="form">
+
+                            <form asp-action="BookJourney" asp-controller="Bookings">
                                 <div class="form-group">
                                     <label for="username">Full name (on the card)</label>
-                                    <input type="text" name="username" placeholder="Jason Doe" required class="form-control">
+                                    <input type="text" name="username" placeholder="Jason Doe" required class="form-control form-control-sm">
                                 </div>
+
                                 <div class="form-group">
-                                    <label for="cardNumber">Card number</label>
+                                    <label for="cardNumber">
+                                        Card number &nbsp;
+                                        <i class="fab fa-cc-visa"></i>  &nbsp;
+                                        <i class="fab fa-cc-amex"></i>  &nbsp;
+                                        <i class="fab fa-cc-mastercard"></i>
+                                    </label>
                                     <div class="input-group">
-                                        <input type="text" name="cardNumber" placeholder="Your card number" class="form-control" required>
-                                        <div class="input-group-append">
-                                            <span class="input-group-text text-muted">
-                                                    <i class="fa fa-cc-visa mx-1"></i>
-                                                    <i class="fa fa-cc-amex mx-1"></i>
-                                                    <i class="fa fa-cc-mastercard mx-1"></i>
-                                                </span>
-                                        </div>
+                                        <input type="text" name="cardNumber" placeholder="Your card number" class="form-control form-control-sm" required>
                                     </div>
                                 </div>
+
                                 <div class="row">
                                     <div class="col-sm-8">
                                         <div class="form-group">
                                             <label><span class="hidden-xs">Expiration</span></label>
                                             <div class="input-group">
-                                                <input type="number" placeholder="MM" name="" class="form-control" required>
-                                                <input type="number" placeholder="YY" name="" class="form-control" required>
+                                                <input type="number" placeholder="MM" name="" class="form-control form-control-sm" required>
+                                                <input type="number" placeholder="YY" name="" class="form-control form-control-sm" required>
                                             </div>
                                         </div>
                                     </div>
@@ -363,23 +368,36 @@
                                             <label data-toggle="tooltip" title="Three-digits code on the back of your card">CVV
                                                 <i class="fa fa-question-circle"></i>
                                             </label>
-                                            <input type="text" required class="form-control">
+                                            <input type="text" required class="form-control form-control-sm">
                                         </div>
                                     </div>
 
                                 </div>
-                                <button type="button" class="subscribe btn btn-primary btn-block rounded-pill shadow-sm"> Confirm </button>
+                                    
+                                <input type="number" name="Passengers" class="passengers__number--input" min="1" max="@PassengersInputMaximum" value="1" hidden />
+                                <input type="hidden" name="JourneyID" value="@Model.JourneyID" />
+                                <input type="hidden" name="UserID" value="@userManager.GetUserId(User)" />
+                                <input type="hidden" name="SeatsReceived" value="0" id="seatsReceived" />
+
+                                <input type="submit" value="Confirm" class="btn btn-sm btn-dark" disabled="@SubmittionNotAllowed">
                             </form>
                         </div>
+                        <!-- credit card info-->
+                        
                         <!-- End -->
 
                         <!-- Paypal info -->
                         <div id="nav-tab-paypal" class="tab-pane fade">
-                            <p>Paypal is easiest way to pay online</p>
-                            <p>
-                                <button type="button" class="btn btn-primary rounded-pill"><i class="fa fa-paypal mr-2"></i> Log into my Paypal</button>
+                            <p class="mt-5">
+                                <button type="button" class="btn btn-dark rounded-pill">
+                                    <i class="fab fa-paypal"></i> Log into my Paypal
+                                </button>
                             </p>
-                            <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                            <p class="text-muted">
+                                <small>
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+                                    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                </small>
                             </p>
                         </div>
                         <!-- End -->

@@ -41,8 +41,8 @@ namespace TrainReservation.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "441f7434-4180-4833-bb92-e9ca08d02a4c",
-                            ConcurrencyStamp = "4eabdc46-df8b-48c6-acdf-5eb778847778",
+                            Id = "9ab4327e-728d-4b68-bfca-d5f18f1930e3",
+                            ConcurrencyStamp = "9b85b849-42b9-4109-befd-9e91b3b24b4a",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -196,6 +196,14 @@ namespace TrainReservation.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("AppUserId");
+
+                    b.Property<string>("CancellationMessage");
+
+                    b.Property<decimal>("Cost");
+
+                    b.Property<bool>("IsCanceled");
+
+                    b.Property<bool>("IsRefund");
 
                     b.Property<int>("JourneyID");
 

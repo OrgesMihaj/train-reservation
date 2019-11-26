@@ -202,6 +202,10 @@ namespace TrainReservation.Migrations
                     UserID = table.Column<string>(nullable: true),
                     JourneyID = table.Column<int>(nullable: false),
                     Passengers = table.Column<int>(nullable: false),
+                    Cost = table.Column<decimal>(nullable: false),
+                    IsCanceled = table.Column<bool>(nullable: false),
+                    IsRefund = table.Column<bool>(nullable: false),
+                    CancellationMessage = table.Column<string>(nullable: true),
                     AppUserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -252,7 +256,7 @@ namespace TrainReservation.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "441f7434-4180-4833-bb92-e9ca08d02a4c", "4eabdc46-df8b-48c6-acdf-5eb778847778", "Admin", "ADMIN" });
+                values: new object[] { "9ab4327e-728d-4b68-bfca-d5f18f1930e3", "9b85b849-42b9-4109-befd-9e91b3b24b4a", "Admin", "ADMIN" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

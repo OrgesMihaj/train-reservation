@@ -114,6 +114,17 @@ li {
 	}
 /* </Train mockup styles start here */
 
+/* <Payment section styles start here> */
+.nav-pills .nav-link {
+	color: #729EA1;
+}
+
+.nav-pills .nav-link.active, 
+.nav-pills .show > .nav-link {
+	background-color: #729EA1;
+}
+
+/* </Payment section styles start here> */
 
 /* <Footer styles start here> */
 .footer {

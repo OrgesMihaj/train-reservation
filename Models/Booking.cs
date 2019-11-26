@@ -8,10 +8,20 @@ namespace TrainReservation.Models
     public class Booking {
         
         public int BookingID { get; set; }
+
         public string UserID { get; set; }
+
         public int JourneyID { get; set; }
+
         public int Passengers { get; set; }
 
+        public decimal Cost { get; set; }
+
+        public bool IsCanceled { get; set; }
+
+        public bool IsRefund { get; set; }
+
+        public string CancellationMessage { get;set; }
 
         public virtual AppUser AppUser { get; set; }
         public virtual Journey Journey { get; set; }

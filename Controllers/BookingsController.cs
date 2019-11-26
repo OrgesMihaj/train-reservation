@@ -31,6 +31,9 @@ namespace TrainReservation.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
 
+        private readonly Payment payment = new Payment();
+
+        private readonly Seat seat = new Seat();
 
         public BookingsController(ApplicationDbContext context, UserManager<AppUser> userManager)
         {
@@ -70,15 +73,15 @@ namespace TrainReservation.Controllers
                 TotalPassengers = TotalPassengers + b.Passengers;
             }
 
-            if (ModelState.IsValid) /* [3] */
-            {
-                _context.Add(booking);
-            }
+            // initital booking cost; 
+            booking.Cost = booking.Passengers * journey.Price;
 
             int SeatsTaken = TotalPassengers + booking.Passengers;
             int TrainCapacity = journey.Train.Capacity;
 
-            if (SeatsTaken <= TrainCapacity) {
+            if (ModelState.IsValid && SeatsTaken <= TrainCapacity) {  /* [3] */
+
+                _context.Add(booking);
 
                 // check if seat(s) reservations are allowed, and if so,
                 // check if a seats reservation request is provided by the user 
@@ -89,14 +92,20 @@ namespace TrainReservation.Controllers
 
                     if (!string.IsNullOrEmpty(SeatsReceived)) {
 
-                        // journey: needed for the JourneyID
-                        // user.Id: authenticated user ID
-                        // SeatsReceived: string of seats requested seperated by comma: Ex. "5,2,6"
-                        new Seat().reserveSeats(_context, user.Id, booking, journey, SeatsReceived);
+                        // @param SeatsReceived: string of seats requested seperated by comma: Ex. "5,2,6"
+                        seat.reserveSeats(_context, user.Id, booking.BookingID, journey.JourneyID, SeatsReceived);
+
+                        // default price for a reserved seat
+                        // hard-coded, should be provided by the system administrator dynamically
+                        booking.Cost += 5; 
                     }
                 }
 
-                await _context.SaveChangesAsync();
+                // if the journey is paid 
+                if (payment.pay()) {
+                    await _context.SaveChangesAsync();
+                }
+
             } else {
                 return Redirect("/Journeys/Details/" + journey.JourneyID);
             }

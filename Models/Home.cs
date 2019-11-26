@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrainReservation.Models
 {
-    public class Home {
-
-
+    public class Home 
+    {
+        // ...
     }
 }
