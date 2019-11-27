@@ -5,9 +5,6 @@
 
 <h4 class="mt-2 mb-3">Your bookings</h4>
 
-
-
-
 <!-- Checking if there are any existing bookings -->
 @if (Enumerable.Count(ViewBag.Bookings) > 0) {
     
@@ -30,6 +27,14 @@
                         
                         <h3 class="booking__title">
                             <strong>@booking.Journey.Departure - @booking.Journey.Destination</strong>
+                            
+                            <!-- Checking if a discount is applied to the price  -->
+                            @{ var defaultCost = booking.Journey.Price * booking.Passengers; }
+
+                            @if (defaultCost > booking.Cost) {
+                                <span class="badge badge-light"><del>$@defaultCost</del></span>
+                            } 
+                            
                             <span class="badge badge-success">$@booking.Cost</span>
                         </h3>
 
