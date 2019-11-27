@@ -16,5 +16,10 @@ namespace TrainReservation.Models {
         {
             return true;
         }
+
+        public void refund(string UserId) 
+        {
+            // ...
+        }
     }
 }

@@ -34,6 +34,7 @@ namespace TrainReservation.Controllers
         private readonly Payment payment = new Payment();
 
         private readonly Seat seat = new Seat();
+        private readonly Coupon coupon = new Coupon();
 
         public BookingsController(ApplicationDbContext context, UserManager<AppUser> userManager)
         {
@@ -58,58 +59,69 @@ namespace TrainReservation.Controllers
         // POST: Bookings/BookJourney
         [HttpPost]
         [ValidateAntiForgeryToken] /* [1] */
-        public async Task<ActionResult> BookJourney([Bind("JourneyID,UserID,Passengers")] Booking booking, string SeatsReceived) { /* [2] */
+        public async Task<ActionResult> BookJourney([Bind("JourneyID,UserID,Passengers")] Booking booking, string SeatsReceived, string CouponCode) { /* [2] */
 
             var user = await _userManager.GetUserAsync(HttpContext.User); /* [5] */
             
             // the journey that is being booked
             Journey journey = _context.Journeys.Include(j => j.Train).Single(j => j.JourneyID == booking.JourneyID);
+            
 
             Booking[] bookings = _context.Bookings.ToArray();
             
-            int TotalPassengers = 0;
+            // Making sure that the journey is reserved before the departure time 
+            if (journey.DepartureTime > DateTime.Now) {
 
-            foreach (Booking b in bookings) {
-                TotalPassengers = TotalPassengers + b.Passengers;
-            }
+                int TotalPassengers = 0;
 
-            // initital booking cost; 
-            booking.Cost = booking.Passengers * journey.Price;
+                foreach (Booking b in bookings) {
+                    TotalPassengers = TotalPassengers + b.Passengers;
+                }
 
-            int SeatsTaken = TotalPassengers + booking.Passengers;
-            int TrainCapacity = journey.Train.Capacity;
+                // initital booking cost; 
+                booking.Cost = booking.Passengers * journey.Price;
 
-            if (ModelState.IsValid && SeatsTaken <= TrainCapacity) {  /* [3] */
+                // Check if the user is using a valid coupon and, if so, 
+                // apply it to the price.
+                if (!String.IsNullOrEmpty(CouponCode)) {
+                    booking.Cost = coupon.ApplyCoupon(_context, booking.Cost, CouponCode);
+                }
 
-                _context.Add(booking);
+                int SeatsTaken = TotalPassengers + booking.Passengers;
+                int TrainCapacity = journey.Train.Capacity;
 
-                // check if seat(s) reservations are allowed, and if so,
-                // check if a seats reservation request is provided by the user 
-                if (journey.AllowSeatReservation) {
-                    
-                    // Default state of `SeatsReceived` input in the client-side is 0 
-                    if (SeatsReceived == "0") SeatsReceived = null;
+                if (ModelState.IsValid && SeatsTaken <= TrainCapacity && journey.IsCanceled == false) {  /* [3] */
 
-                    if (!string.IsNullOrEmpty(SeatsReceived)) {
+                    _context.Add(booking);
 
-                        // @param SeatsReceived: string of seats requested seperated by comma: Ex. "5,2,6"
-                        seat.reserveSeats(_context, user.Id, booking.BookingID, journey.JourneyID, SeatsReceived);
+                    // check if seat(s) reservations are allowed, and if so,
+                    // check if a seats reservation request is provided by the user 
+                    if (journey.AllowSeatReservation) {
+                        
+                        // Default state of `SeatsReceived` input in the client-side is 0 
+                        if (SeatsReceived == "0") SeatsReceived = null;
 
-                        // default price for a reserved seat
-                        // hard-coded, should be provided by the system administrator dynamically
-                        booking.Cost += 5; 
+                        if (!string.IsNullOrEmpty(SeatsReceived)) {
+
+                            // @param SeatsReceived: string of seats requested seperated by comma: Ex. "5,2,6"
+                            seat.reserveSeats(_context, user.Id, booking.BookingID, journey.JourneyID, SeatsReceived);
+
+                            // default price for a reserved seat
+                            // hard-coded, should be provided by the system administrator dynamically
+                            booking.Cost += 5; 
+                        }
                     }
-                }
 
-                // if the journey is paid 
-                if (payment.pay()) {
-                    await _context.SaveChangesAsync();
-                }
+                    // if the journey is paid 
+                    if (payment.pay()) {
+                        await _context.SaveChangesAsync();
+                    }
 
-            } else {
-                return Redirect("/Journeys/Details/" + journey.JourneyID);
+                } else {
+                    return Redirect("/Journeys/Details/" + journey.JourneyID);
+                }
             }
-            
+
             return Redirect("/Bookings");
         }
 
@@ -119,13 +131,16 @@ namespace TrainReservation.Controllers
         {
             var Booking = await _context.Bookings.FindAsync(BookingID);
 
+            // the journey that is being booked
+            Journey Journey = _context.Journeys.Include(j => j.Train).Single(j => j.JourneyID == Booking.JourneyID);
+
             var UserID = _userManager.GetUserId(HttpContext.User);
 
-            if (Booking.UserID == UserID) {
+            // Make sure that the booking is canceled only before train departure
+            if (Booking.UserID == UserID && Journey.DepartureTime > DateTime.Now) {
                 
                 _context.Bookings.Remove(Booking);
                 await _context.SaveChangesAsync();
-
             } 
 
             return Redirect("/Bookings");

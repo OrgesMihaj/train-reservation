@@ -20,7 +20,6 @@ namespace TrainReservation.Models
         public bool IsCanceled { get; set; }
 
         public bool IsRefund { get; set; }
-
         public string CancellationMessage { get;set; }
 
         public virtual AppUser AppUser { get; set; }

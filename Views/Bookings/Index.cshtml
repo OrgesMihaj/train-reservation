@@ -16,9 +16,17 @@
 
         <div class="row mb-5">
             <div class="col-md-6">
+                
 
                 <div class="card">
                     <div class="card-body">
+
+                        @if (booking.IsCanceled) {
+                            <span class="badge badge-danger">This journey is canceled</span> 
+                            <br><br>
+                            <p><span class="badge badge-light">Administrator:</span> @booking.CancellationMessage</p>
+                            <hr>
+                        }
                         
                         <h3 class="booking__title">
                             <strong>@booking.Journey.Departure - @booking.Journey.Destination</strong>
@@ -40,7 +48,18 @@
                         <form asp-action="CancelBooking" asp-controller="Bookings">
                             <input type="hidden" name="BookingID" value="@booking.BookingID" />
 
-                            <input type="submit" value="Cancel" class="btn btn-sm btn-danger" >
+                            @if(booking.IsCanceled) {
+                                <input type="submit" value="Delete" class="btn btn-sm btn-light" >
+                            } else {
+
+                                @if (booking.Journey.DepartureTime > DateTime.Now) {
+                                    <input type="submit" value="Cancel" class="btn btn-sm btn-danger" >
+                                } else {
+                                    <span class="badge badge-warning">Your train is departed.</span>
+                                }
+                                
+                            }
+
                         </form>
 
                     </div>

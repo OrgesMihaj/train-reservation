@@ -34,6 +34,8 @@ namespace TrainReservation.Models
         [Required]
         public int TrainID { get; set; }
 
+        public bool IsCanceled { get; set; }
+
         // Delegation
         // Only one train can participate in a journey. 
         public virtual Train Train { get; set; }

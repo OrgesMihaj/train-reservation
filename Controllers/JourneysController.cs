@@ -18,6 +18,8 @@ namespace TrainReservation.Controllers
     {
         private readonly ApplicationDbContext _context;
 
+        private readonly Payment payment = new Payment();
+
         public JourneysController(ApplicationDbContext context)
         {
             _context = context;
@@ -27,7 +29,10 @@ namespace TrainReservation.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
-            ViewBag.Journeys = _context.Journeys.Include(j => j.Train);
+            ViewBag.Journeys = _context.Journeys
+                                .Include(j => j.Train)
+                                .OrderByDescending(j => j.DepartureTime)
+                                .Where(b => b.IsCanceled == false);
             return View();
         }
 
@@ -161,8 +166,21 @@ namespace TrainReservation.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var journey = await _context.Journeys.FindAsync(id);
-            _context.Journeys.Remove(journey);
+            var bookings = _context.Bookings.Where(b => b.Journey == journey);
+            
+            // Cancel each booking and refund the users 
+            foreach (Booking booking in bookings) {
+                booking.IsCanceled = true;
+                booking.IsRefund   = true;
+                booking.CancellationMessage = "The journey is canceled for operetional reasons. Your ticket is refunded.";
+
+                payment.refund(booking.UserID);
+            } 
+
+            journey.IsCanceled = true;
+
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

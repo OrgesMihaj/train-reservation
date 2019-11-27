@@ -29,7 +29,6 @@ namespace TrainReservation.Models {
         public virtual Booking Booking { get; set; }
 
         
-
         // Reserve seat(s) for a given booking
         public async void reserveSeats(
             ApplicationDbContext _context, string UserID, int BookingID, int JourneyID, string SeatsRequested) 

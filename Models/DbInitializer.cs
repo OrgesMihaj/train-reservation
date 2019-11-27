@@ -48,7 +48,7 @@ namespace TrainReservation.Models
             context.Database.EnsureCreated();
 
             // Look for any students.
-            if (context.Trains.Any() && context.Journeys.Any())
+            if (context.Trains.Any() && context.Journeys.Any() && context.Coupons.Any())
             {
                 // DB has been seeded
                 return;   
@@ -73,8 +73,8 @@ namespace TrainReservation.Models
                     JourneyID = 1, 
                     Departure="Sofia", 
                     Destination = "Blagoevgrad", 
-                    DepartureTime = new DateTime(2019, 11, 21, 13, 0, 0),
-                    ArrivalTime = new DateTime(2019, 11, 21, 15, 0, 0),
+                    DepartureTime = DateTime.Now.AddDays(1),
+                    ArrivalTime = DateTime.Now.AddDays(1).AddHours(1),
                     Price = 5,
                     AllowSeatReservation = false,
                     TrainID = 1
@@ -83,8 +83,8 @@ namespace TrainReservation.Models
                     JourneyID = 2, 
                     Departure="Blagoevgrad", 
                     Destination = "Sofia", 
-                    DepartureTime = new DateTime(2019, 11, 21, 15, 30, 0),
-                    ArrivalTime = new DateTime(2019, 11, 21, 17, 30, 0),
+                    DepartureTime = DateTime.Now.AddDays(1),
+                    ArrivalTime = DateTime.Now.AddDays(1).AddHours(1),
                     Price = 5,
                     AllowSeatReservation = false,
                     TrainID = 1
@@ -93,8 +93,8 @@ namespace TrainReservation.Models
                     JourneyID = 3, 
                     Departure="Sofia", 
                     Destination = "Plovdiv", 
-                    DepartureTime = new DateTime(2019, 11, 21, 10, 0, 0),
-                    ArrivalTime = new DateTime(2019, 11, 21, 12, 20, 0),
+                    DepartureTime = DateTime.Now.AddDays(1),
+                    ArrivalTime = DateTime.Now.AddDays(1).AddHours(3),
                     Price = 7,
                     AllowSeatReservation = false,
                     TrainID = 2
@@ -103,8 +103,8 @@ namespace TrainReservation.Models
                     JourneyID = 4, 
                     Departure="Sofia", 
                     Destination = "Burgas", 
-                    DepartureTime = new DateTime(2019, 11, 21, 8, 0, 0),
-                    ArrivalTime = new DateTime(2019, 11, 21, 13, 35, 0),
+                    DepartureTime = DateTime.Now.AddDays(1),
+                    ArrivalTime = DateTime.Now.AddDays(1).AddHours(6),
                     Price = 15,
                     AllowSeatReservation = true,
                     TrainID = 3
@@ -115,6 +115,7 @@ namespace TrainReservation.Models
             {
                 context.Journeys.Add(journey);
             }
+
             
             context.SaveChanges();
         }

@@ -15,8 +15,8 @@ namespace TrainReservation.Data
         public DbSet<TrainReservation.Models.Train> Trains { get; set; }
         public DbSet<TrainReservation.Models.Journey> Journeys { get; set; }
         public DbSet<TrainReservation.Models.Booking> Bookings { get; set; }
-
         public DbSet<TrainReservation.Models.Seat> Seats { get; set; }
+        public DbSet<TrainReservation.Models.Coupon> Coupons { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,5 +38,7 @@ namespace TrainReservation.Data
             // [Journey:Booking] One-to-Many relationship
             modelBuilder.Entity<Journey>().HasMany(j => j.Bookings).WithOne(b => b.Journey);
         }
+
+        public DbSet<TrainReservation.Models.Coupon> Coupon { get; set; }
     }
 }

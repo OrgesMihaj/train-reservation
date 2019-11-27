@@ -9,7 +9,7 @@ using TrainReservation.Data;
 namespace TrainReservation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191126120005_InitialCreate")]
+    [Migration("20191127182947_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,8 +43,8 @@ namespace TrainReservation.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9ab4327e-728d-4b68-bfca-d5f18f1930e3",
-                            ConcurrencyStamp = "9b85b849-42b9-4109-befd-9e91b3b24b4a",
+                            Id = "37e0be0f-e91f-4afe-ac81-bcd347fe7a7e",
+                            ConcurrencyStamp = "aed619a9-496e-4c05-84dd-b6cf19aaa713",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -222,6 +222,29 @@ namespace TrainReservation.Migrations
                     b.ToTable("Bookings");
                 });
 
+            modelBuilder.Entity("TrainReservation.Models.Coupon", b =>
+                {
+                    b.Property<int>("CouponID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<decimal>("Amount");
+
+                    b.Property<string>("Code")
+                        .IsRequired();
+
+                    b.Property<string>("Description")
+                        .IsRequired();
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<decimal>("Percentage");
+
+                    b.HasKey("CouponID");
+
+                    b.ToTable("Coupon");
+                });
+
             modelBuilder.Entity("TrainReservation.Models.Journey", b =>
                 {
                     b.Property<int>("JourneyID")
@@ -239,6 +262,8 @@ namespace TrainReservation.Migrations
 
                     b.Property<string>("Destination")
                         .IsRequired();
+
+                    b.Property<bool>("IsCanceled");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18, 2)");
