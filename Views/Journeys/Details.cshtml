@@ -331,20 +331,20 @@
             let Capacity = $('#capacity').text().replace('(', '').replace(')', '');
             
             // Provides functions that increment/decrement the passengers value.
-            /* Line: 52 */  PassengersControllers(Capacity);  
+            /* Line: 58 */  PassengersControllers(Capacity);  
 
             // Watch if reserve seats checkbox is checked, and if so, 
             // show seats reservation panel and add the additional price. 
-            /* Line: 126 */ WatchReserveSeatsCheckbox(); 
+            /* Line: 136 */ WatchReserveSeatsCheckbox(); 
 
             // Reserve Seats based on the passengers number. 
-            /* Line: 161 */ ReserveSeats();  
+            /* Line: 169 */ ReserveSeats();  
 
             // Show and hide Payment form when user clicks pay button. 
-            /* Line: 228 */ WatchPaymentForm();
+            /* Line: 236 */ WatchPaymentForm();
 
             // Check if user has selected single trip option or round trip. 
-            /* Line: 265 */ WatchJourneyInterval();
+            /* Line: 271 */ WatchJourneyInterval();
         })();
     </script>
 }
@@ -597,7 +597,7 @@
     </div> <!-- /* </col> */ -->
     <!-- /* Booking section ends here */ -->
 
-    <!-- Seat(s) reservation section starts here -->
+    <!-- /* <Seat(s) reservation section starts here> */ -->
     @if (@Model.AllowSeatReservation) {
     <div class="col-md-5">
         <div class="seats-reservation card">
@@ -636,9 +636,31 @@
                             <div></div>
                         }
 
+                        @if (i % 4 == 0 && i % 8 != 0) {
+                            <div class="head head--bottom"></div> 
+                            <div class="head head--bottom"></div> 
+                            <div></div> 
+                            <div class="head head--bottom"></div> 
+                            <div class="head head--bottom"></div>
+
+                            <div class="head head--top"></div> 
+                            <div class="head head--top"></div> 
+                            <div></div> 
+                            <div class="head head--top"></div> 
+                            <div class="head head--top"></div>
+                        }
+
                         // Empty row
-                        @if (i % 16 == 0) {
+                        @if (i % 8 == 0) {
                             <div></div><div></div><div></div><div></div><div></div>
+                        }
+
+                        @if (i % 16 == 0) {
+                            <div class="seat__space"></div>
+                            <div class="seat__space"></div>
+                            <div class="seat__space"></div>
+                            <div class="seat__space"></div>
+                            <div class="seat__space"></div>
                         }
                     }
                 </div>
@@ -647,7 +669,7 @@
         </div> 
     </div>
     }
-    <!-- Seat(s) reservation section ends here -->
+    <!-- /* </Seat(s) reservation section ends here> */ -->
 
 
 </div> <!-- </row> -->

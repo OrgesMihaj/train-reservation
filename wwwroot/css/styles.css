@@ -112,6 +112,23 @@ li {
 		color: #fff;
 		cursor: default;	
 	}
+
+	.head {
+		background: #e3e3e3;
+		height: 6px;
+		width: 10px;
+	}
+		.head--bottom {
+			margin: -12px auto auto auto;
+		}
+	
+		.head--top {
+			margin: auto auto -12px auto;
+		}
+
+	.seat__space {
+		height: 30px;
+	}
 /* </Train mockup styles start here */
 
 /* <Payment section styles start here> */
