@@ -157,7 +157,7 @@
             $("#seatsReceived").val(SelectedSeatString);
         } // </UpdateSeatsReceived>
 
-        // Reserve Seats based on passengers number 
+        // Reserve Seats based on the passengers number.
         function ReserveSeats() {
             let Seat = $('.train__seat');
 
@@ -213,7 +213,7 @@
 
         function ShowSeatsReservationAvailability(ReservedSeats) {
             $(".seatsAvailable").text(ReservedSeats + "/" + PassengersNumberInput.val());
-        }
+        } // </ShowSeatsReservationAvailability>
 
         function GetCurrentPrice() {
             return parseInt($('#price').text().replace('$', ''));
@@ -240,60 +240,100 @@
                     showPaymentForm = true;
                 }
             });
+        } // </WatchPaymentForm>
+
+        // Retrieve the price of the return journey in case that the user 
+        // selects the round trip option. 
+        function GetReturnJourneyPrice() {
+            
+            let SelectedReturnJourney = $('#ReturnJourneySelectBox').children("option:checked").text();
+
+            // Retrieve the price of the return journey 
+            SelectedReturnJourney = SelectedReturnJourney.substring(
+                SelectedReturnJourney.indexOf('$') + 1, SelectedReturnJourney.length
+            );
+
+            return parseInt(SelectedReturnJourney);
         }
 
-        function GetSelectedJourneyPrice() {
-            let SelectedOption = $('#ReturnJourney').children("option:checked").text();
+        // Check if user has selected single trip option or round trip. 
+        // In case that, the round trip option is selected, add the 
+        // return journey price to the total price and set the return 
+        // journey ID to the `ReturnJourneyInput`. 
+        function WatchJourneyInterval() {
+            let ReturnJourneyInput     = $('#ReturnJourneyInput');
+            let ReturnJourneySelectBox = $('#ReturnJourneySelectBox')
+            let JourneyReturnID        = $('#ReturnJourneySelectBox').val();
+            let ReturnJourneyContainer = $('.returnJourneyContainer');
+            
+            // Default state of the return journey select box.
+            ReturnJourneyContainer.hide();
+            
+            // Applied when user clicks for the first time to the
+            // Round-trip radio input. 
+            $('#JourneyIntervalReturn').on('click', function () {
 
-            // Retrieve the price of the second journey 
-            SelectedOption = SelectedOption.substring(SelectedOption.indexOf('$') + 1, SelectedOption.length);
+                // Display return journey select box.
+                ReturnJourneyContainer.fadeIn();
+                
+                // Apply the return journey price. 
+                SetPrice(GetReturnJourneyPrice() + GetCurrentPrice());
 
-            return parseInt(SelectedOption);
+                // Set the price of the return journey as an attribute in the select box. 
+                // This data is necessary because we want to know the price of the initial 
+                // journey automatically selected when user clicks the Round-trip option. 
+                ReturnJourneySelectBox.data('current-price', GetReturnJourneyPrice())
+
+                ReturnJourneyInput.val(JourneyReturnID);
+            });
+
+            // Hide return journey select box if user clicks One-way option. 
+            $('#JourneyIntervalSingle').on('click', function () {
+                ReturnJourneyContainer.fadeOut();
+
+                ReturnJourneyInput.val("");
+            });
+            
+            // Check if user has changed the initial selection. 
+            ReturnJourneySelectBox.change(function() {
+
+                // Retrieve the selected journey ID
+                JourneyReturnID = $('#ReturnJourneySelectBox').val();
+
+                // Retrieve the price of the previous selected joueney 
+                let PrevJourneyPrice = parseInt(ReturnJourneySelectBox.data('current-price'));
+                
+                if (PrevJourneyPrice != null) {
+
+                    //Deduct the old price form the total price. 
+                    SetPrice((GetCurrentPrice() - PrevJourneyPrice) + GetReturnJourneyPrice());
+                } 
+                
+                ReturnJourneySelectBox.data('current-price', GetReturnJourneyPrice())
+
+                ReturnJourneyInput.val(JourneyReturnID);
+            });
         }
 
         // INITIAL POINT
         (function () {
             let Capacity = $('#capacity').text().replace('(', '').replace(')', '');
             
-            PassengersControllers(Capacity);
-            WatchReserveSeatsCheckbox();
-            ReserveSeats();  
-            WatchPaymentForm();
+            // Provides functions that increment/decrement the passengers value.
+            /* Line: 52 */  PassengersControllers(Capacity);  
 
-            let ReturnJourneyInput = $('#ReturnJourneyInput');
-            let JourneyReturnID = $('#ReturnJourney').val();
+            // Watch if reserve seats checkbox is checked, and if so, 
+            // show seats reservation panel and add the additional price. 
+            /* Line: 126 */ WatchReserveSeatsCheckbox(); 
 
-            $('.returnJourney').hide();
+            // Reserve Seats based on the passengers number. 
+            /* Line: 161 */ ReserveSeats();  
 
-            $('#JourneyIntervalDouble').on('click', function () {
-                $('.returnJourney').fadeIn();
+            // Show and hide Payment form when user clicks pay button. 
+            /* Line: 228 */ WatchPaymentForm();
 
-                SetPrice(GetSelectedJourneyPrice() + GetCurrentPrice());
-
-                $('#ReturnJourney').data('current-value', GetSelectedJourneyPrice())
-
-                ReturnJourneyInput.val(JourneyReturnID);
-            });
-
-            $('#JourneyIntervalSingle').on('click', function () {
-                $('.returnJourney').fadeOut();
-
-                ReturnJourneyInput.val("");
-            });
-
-            $('#ReturnJourney').change(function() {
-                let JourneyReturnID = $('#ReturnJourney').val();
-                let currentValue = parseInt($('#ReturnJourney').data('current-value'));
-                
-                if (currentValue != null) {
-                    SetPrice((GetCurrentPrice() - currentValue) + GetSelectedJourneyPrice());
-                } 
-                
-                $('#ReturnJourney').data('current-value', GetSelectedJourneyPrice())
-
-                ReturnJourneyInput.val(JourneyReturnID);
-            });
-
+            // Check if user has selected single trip option or round trip. 
+            /* Line: 263 */ WatchJourneyInterval();
         })();
     </script>
 }
@@ -330,88 +370,103 @@
                         <small id="capacity">(@RemainingCapacity)</small>
                     </div>
                 </div>
-                    <!-- </Booking form: Passengers> -->
+                <!-- </Booking form: Passengers> -->
 
+                <!-- /* <Allow seat reservation checkbox> */ -->
                 @if (@Model.AllowSeatReservation) {
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="reserveSeatsCheckbox">
-                    <label class="form-check-label" for="reserveSeatsCheckbox">
-                        Do you want to reserve seats? <br>
-                        <small>Extra <strong>5$</strong> will be charged per seat.</small>
-                    </label>
-                </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="reserveSeatsCheckbox">
+                        <label class="form-check-label" for="reserveSeatsCheckbox">
+                            Do you want to reserve seats? <br>
+                            <small>Extra <strong>5$</strong> will be charged per seat.</small>
+                        </label>
+                    </div>
                 }
+                <!-- /* <Allow seat reservation checkbox> */ -->
 
                 <br>
 
-                <!-- Single interval -->
+                <!-- /* One-way journey radio input */ -->
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="JourneyInterval" id="JourneyIntervalSingle" value="single" checked>
-                    <label class="form-check-label" for="JourneyIntervalSingle">Single</label>
+                    <label class="form-check-label" for="JourneyIntervalSingle">One-way</label>
                 </div>
 
-                <!-- Returned interval -->
+                <!-- /* Round trip radio input */ -->
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="JourneyInterval" id="JourneyIntervalDouble" value="return">
-                    <label class="form-check-label" for="JourneyIntervalDouble">Return</label>
+                    <input class="form-check-input" type="radio" name="JourneyInterval" id="JourneyIntervalReturn" value="Return">
+                    <label class="form-check-label" for="JourneyIntervalReturn">Round-trip</label>
                 </div>
 
                 <br><br>
 
-                <!-- Journeys -->
-                <div class="form-group row returnJourney">
+                <!-- /* <Return Journey select box starts here> */ -->
+                <div class="form-group row returnJourneyContainer">
 
                     <div class="input-group mb-3 col-md-9">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-route"></i></span>
                         </div>
 
-                        <select id="ReturnJourney" class ="form-control" data-current-value="">
+                        <!-- /* Return journey select box */ -->
+                        <select id="ReturnJourneySelectBox" class ="form-control" data-current-price="">
                             @foreach (var Journey in ViewBag.Journeys)
                             {
-                                <option value="@Journey.JourneyID">(@Journey.DepartureTime) @Journey.Departure - @Journey.Destination  $@Journey.Price</option>
+                                <option value="@Journey.JourneyID">(@Journey.DepartureTime) 
+                                    @Journey.Departure - @Journey.Destination  $@Journey.Price</option>
                             }
                         </select>
                     </div>
                 </div>
+                <!-- /* <Return Journey select box ends here> */ -->
 
                 <hr>
-
+                
                 <button class="btn btn-sm btn-dark" id="payButton">Pay</button>
 
+                <!-- /* Go back to home page */ -->
                 <a class="btn btn-sm btn-light ml-2" href="/home">Travel</a> 
 
-            </div> <!-- </card-body> -->
-        </div> <!-- </card> -->
+            </div> <!-- /* </card-body> */ -->
+        </div> <!-- /* </card> */ -->
 
         <br><br>
 
-        <!-- Payment section starts here -->
+        <!-- /* Payment section starts here */ -->
         <div class="card payment-card">
             <div class="card-body">
                     
                 <div class="bg-white rounded-lg">
-                    <!-- Credit card form tabs -->
+                    <!-- /* <Payment tabs> */ -->
                     <ul role="tablist" class="nav bg-light nav-pills rounded-pill nav-fill mb-3">
+
+                        <!-- /* <Credit card> */ -->
                         <li class="nav-item">
                             <a data-toggle="pill" href="#nav-tab-card" class="nav-link active rounded-pill">
                                 <i class="fa fa-credit-card"></i> Credit Card
                             </a>
                         </li>
+                        <!-- /* </Credit card> */ -->
+
+                        <!-- /* <Paypal> */ -->
                         <li class="nav-item">
                             <a data-toggle="pill" href="#nav-tab-paypal" class="nav-link rounded-pill">
                                 <i class="fab fa-paypal"></i> Paypal
                             </a>
                         </li>
+                         <!-- /* </Paypal> */ -->
+
+                         <!-- /* <Bank> */ -->
                         <li class="nav-item">
                             <a data-toggle="pill" href="#nav-tab-bank" class="nav-link rounded-pill">
                                 <i class="fa fa-university"></i> Bank Transfer
                             </a>
                         </li>
+                        <!-- /* </Bank> */ -->
                     </ul>
-                    <!-- End -->
+                    <!-- /* </Payment tabs> */ -->
 
-                    <!-- Credit card form content -->
+                    <!-- /* <Credit card form content> */ -->
                     <div class="tab-content">
                         
                         <div id="nav-tab-card" class="tab-pane fade show active">
@@ -463,7 +518,7 @@
                                 </div>
 
                                 <hr>
-                                    
+                                
                                 <input type="number" name="Passengers" class="passengers__number--input" min="1" max="@PassengersInputMaximum" value="1" hidden />
                                 <input type="hidden" name="JourneyID" value="@Model.JourneyID" />
                                 <input type="hidden" name="UserID" value="@userManager.GetUserId(User)" />
@@ -473,9 +528,8 @@
                                 <input type="submit" value="Confirm" class="btn btn-sm btn-dark" disabled="@SubmittionNotAllowed">
                             </form>
                         </div>
-                        <!-- credit card info-->
+                        <!-- /* </Credit card form content> */ -->
                         
-                        <!-- End -->
 
                         <!-- Paypal info -->
                         <div id="nav-tab-paypal" class="tab-pane fade">
@@ -519,10 +573,10 @@
             
             </div>
         </div>
-        <!-- Payment section ends here -->
+        <!-- /* Payment section ends here */ -->
 
-    </div> <!-- </col> -->
-    <!-- Booking section ends here -->
+    </div> <!-- /* </col> */ -->
+    <!-- /* Booking section ends here */ -->
 
     <!-- Seat(s) reservation section starts here -->
     @if (@Model.AllowSeatReservation) {
