@@ -178,7 +178,7 @@ namespace TrainReservation.Controllers
                 booking.IsRefund   = true;
                 booking.CancellationMessage = "The journey is canceled for operetional reasons. Your ticket is refunded.";
 
-                payment.refund(booking.UserID);
+                payment.Refund(booking.UserID, booking.BookingID);
             } 
 
             journey.IsCanceled = true;

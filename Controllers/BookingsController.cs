@@ -61,14 +61,24 @@ namespace TrainReservation.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken] /* [1] */
         public async Task<ActionResult> BookJourney(
-            [Bind("JourneyID,UserID,Passengers")] Booking booking, string SeatsReceived, string CouponCode, string ReturnJourneyInput) 
+            [Bind("JourneyID,UserID,Passengers")] Booking booking, 
+            string SeatsReceived, string CouponCode, string ReturnJourneyInput,
+            string Name, string CardNumber, string ExpirationYear, string ExpirationMonth, string CVV
+            ) 
         { /* [2] */
 
             var user = await _userManager.GetUserAsync(HttpContext.User); /* [5] */
             
             // the journey that is being booked
-            Journey journey = _context.Journeys.Include(j => j.Train).Single(j => j.JourneyID == booking.JourneyID);
+            Journey journey = _context.Journeys
+                                .Include(j => j.Train)
+                                .Include(j => j.Seats)
+                                .Single(j => j.JourneyID == booking.JourneyID);
             
+            // Retriving a list of journeys that user may want to return from. 
+            ViewBag.Journeys = _context.Journeys
+                                .Where(j => j.Departure == journey.Destination && j.DepartureTime > journey.ArrivalTime);
+
             Booking[] bookings = _context.Bookings.ToArray();
             
             // Making sure that the journey is reserved before the departure time 
@@ -98,17 +108,9 @@ namespace TrainReservation.Controllers
                     if (!String.IsNullOrEmpty(ReturnJourneyInput)) {
                         
                         // making sure that user has entered a number 
-                        if (int.TryParse(ReturnJourneyInput, out int JourneyID)) {
-
-                            Booking newBooking = new Booking();
-                            Journey newJourney = _context.Journeys.Single(j => j.JourneyID == JourneyID);
-                            
-                            newBooking.UserID = user.Id;
-                            newBooking.JourneyID = JourneyID;
-                            newBooking.Cost = booking.Passengers * newJourney.Price;
-                            newBooking.Passengers = booking.Passengers;
-                            
-                            _context.Add(newBooking);
+                        if (int.TryParse(ReturnJourneyInput, out int JourneyID))
+                        {
+                            BookReturnJourney(booking, user, JourneyID);
 
                             TempData["BookReturnTicket"] = "You have successfully booked the trip from " + journey.Destination + " to " + journey.Departure;
                         }
@@ -136,9 +138,25 @@ namespace TrainReservation.Controllers
                     }
 
 
-                    // if the journey is paid 
-                    if (payment.pay()) {
-                        await _context.SaveChangesAsync();
+                    if (long.TryParse(CardNumber, out long cardNumber) 
+                        && int.TryParse(ExpirationYear, out int expirationYear)
+                        && int.TryParse(ExpirationMonth, out int expirationMonth)
+                        && int.TryParse(CVV, out int cvv)
+                    ) {
+                        // if the journey is paid 
+                        if (payment.Pay(Name, cardNumber, expirationYear, expirationMonth, cvv)) {
+                            await _context.SaveChangesAsync();
+                        } else {
+                            TempData["PaymentError"] = Name.GetType() + " " + CardNumber.GetType() + " " + ExpirationYear.GetType() + " " + ExpirationMonth.GetType() + " " + CVV.GetType();
+                            
+                            return View("Views/Journeys/Details.cshtml", journey);
+                        }
+
+                    } else {
+
+                        TempData["PaymentError"] = "Invalid credit card information.";
+
+                        return View("Views/Journeys/Details.cshtml", journey);
                     }
 
                 } else {
@@ -150,7 +168,7 @@ namespace TrainReservation.Controllers
 
                     TempData["Error"] = "Something went wrong";
 
-                    return View("Views/Journeys/Details", journey);
+                    return View("Views/Journeys/Details.cshtml", journey);
                 }
             }
 
@@ -159,8 +177,18 @@ namespace TrainReservation.Controllers
             return RedirectToAction("Index");
         }
 
-        private bool BookReturnTicket(int Booking) {
-            return true;
+        // Book the return journey based on the JourneyID defined by the user. 
+        private void BookReturnJourney(Booking booking, AppUser user, int JourneyID)
+        {
+            Booking newBooking = new Booking();
+            Journey newJourney = _context.Journeys.Single(j => j.JourneyID == JourneyID);
+
+            newBooking.UserID = user.Id;
+            newBooking.JourneyID = JourneyID;
+            newBooking.Cost = booking.Passengers * newJourney.Price;
+            newBooking.Passengers = booking.Passengers;
+
+            _context.Add(newBooking);
         }
         
         [ValidateAntiForgeryToken]
@@ -178,10 +206,18 @@ namespace TrainReservation.Controllers
                 
                 _context.Bookings.Remove(Booking);
                 await _context.SaveChangesAsync();
+
+                payment.Refund(UserID, BookingID);
+
+                TempData["Success"] = "You have successfully canceled the trip from " + Journey.Departure + " to " + Journey.Destination;
+
+                return RedirectToAction("Index");
             } 
 
-            return Redirect("/Bookings");
-        }
+            TempData["Error"] = "Something went wrong";
+            
+            return RedirectToAction("Index");
+        } /* </CancelBooking> */
 
-    }
+    } /* </BookingsController> */
 }

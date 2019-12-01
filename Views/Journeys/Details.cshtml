@@ -15,6 +15,10 @@
         }
     }
 
+    if (@TempData["PaymentError"] != null) {
+        SubmittionNotAllowed = false;
+    }
+
     // Number of passengers already booked for the journey.
     int TotalPassengers = 0; 
 
@@ -46,6 +50,8 @@
 
         // How many seats are already selected?
         let SelectedSeatCounter = 0;
+
+        let ReturnJourneyInput = $('#ReturnJourneyInput');
 
         // Provides functions that increment/decrement the passengers value
         // in the `PassengersNumberLabel` and `PassengersNumberInput`
@@ -116,9 +122,13 @@
             $('#capacity').text("(" + Capacity + ")");
 
             ShowSeatsReservationAvailability(SelectedSeatCounter);
+            
+            let returnJourneyPrice = parseInt(ReturnJourneyInput.val()); 
+
+            if (!returnJourneyPrice) returnJourneyPrice = 0;
 
             // Price: output
-            SetPrice(@Model.Price * Passengers);
+            SetPrice(((@Model.Price + returnJourneyPrice) * Passengers) + (SelectedSeatCounter * 5));
         } // </SetPassengers>
 
         // Watch if reserve seats checkbox is checked, and if so, 
@@ -133,10 +143,8 @@
 
                 if (ReserveSeatsCheckbox.is(':checked')) {
                     SeatsReservationPanel.fadeIn(330);
-                    PriceContainer.text("$" + (Price + 5));
                 } else {
                     SeatsReservationPanel.fadeOut(330);
-                    PriceContainer.text("$" + (Price - 5));
                 }
             }); // </ReserveSeatsCheckbox>
         } // </WatchReserveSeatsCheckbox>
@@ -261,7 +269,6 @@
         // return journey price to the total price and set the return 
         // journey ID to the `ReturnJourneyInput`. 
         function WatchJourneyInterval() {
-            let ReturnJourneyInput     = $('#ReturnJourneyInput');
             let ReturnJourneySelectBox = $('#ReturnJourneySelectBox')
             let JourneyReturnID        = $('#ReturnJourneySelectBox').val();
             let ReturnJourneyContainer = $('.returnJourneyContainer');
@@ -277,7 +284,7 @@
                 ReturnJourneyContainer.fadeIn();
                 
                 // Apply the return journey price. 
-                SetPrice(GetReturnJourneyPrice() + GetCurrentPrice());
+                SetPrice(((@Model.Price + GetReturnJourneyPrice()) * parseInt(PassengersNumberInput.val())) + (SelectedSeatCounter * 5));
 
                 // Set the price of the return journey as an attribute in the select box. 
                 // This data is necessary because we want to know the price of the initial 
@@ -290,6 +297,8 @@
             // Hide return journey select box if user clicks One-way option. 
             $('#JourneyIntervalSingle').on('click', function () {
                 ReturnJourneyContainer.fadeOut();
+
+                SetPrice((@Model.Price * parseInt(PassengersNumberInput.val())) + (SelectedSeatCounter * 5));
 
                 ReturnJourneyInput.val("");
             });
@@ -306,7 +315,9 @@
                 if (PrevJourneyPrice != null) {
 
                     //Deduct the old price form the total price. 
-                    SetPrice((GetCurrentPrice() - PrevJourneyPrice) + GetReturnJourneyPrice());
+                    //SetPrice((GetCurrentPrice() - PrevJourneyPrice) + GetReturnJourneyPrice());
+                    
+                    SetPrice(((@Model.Price + GetReturnJourneyPrice()) * parseInt(PassengersNumberInput.val())) + (SelectedSeatCounter * 5));
                 } 
                 
                 ReturnJourneySelectBox.data('current-price', GetReturnJourneyPrice())
@@ -333,7 +344,7 @@
             /* Line: 228 */ WatchPaymentForm();
 
             // Check if user has selected single trip option or round trip. 
-            /* Line: 263 */ WatchJourneyInterval();
+            /* Line: 265 */ WatchJourneyInterval();
         })();
     </script>
 }
@@ -419,6 +430,14 @@
                     </div>
                 </div>
                 <!-- /* <Return Journey select box ends here> */ -->
+                    
+                @if (TempData["PaymentError"] != null) {
+                    <div class="form-group">
+                        <div class="alert alert-danger" role="alert">
+                            @TempData["PaymentError"]
+                        </div>
+                    </div>
+                }
 
                 <hr>
                 
@@ -474,7 +493,7 @@
                             <form asp-action="BookJourney" asp-controller="Bookings">
                                 <div class="form-group">
                                     <label for="username">Full name (on the card)</label>
-                                    <input type="text" name="username" placeholder="Jason Doe" required class="form-control form-control-sm">
+                                    <input type="text" name="Name" placeholder="Jason Doe" required class="form-control form-control-sm">
                                 </div>
 
                                 <div class="form-group">
@@ -485,7 +504,7 @@
                                         <i class="fab fa-cc-mastercard"></i>
                                     </label>
                                     <div class="input-group">
-                                        <input type="text" name="cardNumber" placeholder="Your card number" class="form-control form-control-sm" required>
+                                        <input type="text" name="CardNumber" placeholder="Your card number" class="form-control form-control-sm" required>
                                     </div>
                                 </div>
 
@@ -494,8 +513,8 @@
                                         <div class="form-group">
                                             <label><span class="hidden-xs">Expiration</span></label>
                                             <div class="input-group">
-                                                <input type="number" placeholder="MM" name="" class="form-control form-control-sm" required>
-                                                <input type="number" placeholder="YY" name="" class="form-control form-control-sm" required>
+                                                <input type="number" placeholder="MM" name="ExpirationMonth" class="form-control form-control-sm" required>
+                                                <input type="number" placeholder="YY" name="ExpirationYear" class="form-control form-control-sm" required>
                                             </div>
                                         </div>
                                     </div>
@@ -504,7 +523,7 @@
                                             <label data-toggle="tooltip" title="Three-digits code on the back of your card">CVV
                                                 <i class="fa fa-question-circle"></i>
                                             </label>
-                                            <input type="text" required class="form-control form-control-sm">
+                                            <input type="text" name="CVV" required class="form-control form-control-sm">
                                         </div>
                                     </div>
 
