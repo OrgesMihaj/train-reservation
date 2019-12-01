@@ -47,11 +47,12 @@ namespace TrainReservation.Controllers
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             
-            ViewBag.Bookings = _context.Bookings
-                                       .Where(b => b.UserID == user.Id)
-                                       .Include(b => b.Journey)
-                                       .Include(b => b.Seats);
-
+            ViewBag.Bookings = 
+                _context.Bookings
+                    .Where(b => b.UserID == user.Id)
+                    .OrderByDescending(b => b.BookingID)
+                    .Include(b => b.Journey)
+                    .Include(b => b.Seats);
 
             return View();  
         }
@@ -59,14 +60,15 @@ namespace TrainReservation.Controllers
         // POST: Bookings/BookJourney
         [HttpPost]
         [ValidateAntiForgeryToken] /* [1] */
-        public async Task<ActionResult> BookJourney([Bind("JourneyID,UserID,Passengers")] Booking booking, string SeatsReceived, string CouponCode) { /* [2] */
+        public async Task<ActionResult> BookJourney(
+            [Bind("JourneyID,UserID,Passengers")] Booking booking, string SeatsReceived, string CouponCode, string ReturnJourneyInput) 
+        { /* [2] */
 
             var user = await _userManager.GetUserAsync(HttpContext.User); /* [5] */
             
             // the journey that is being booked
             Journey journey = _context.Journeys.Include(j => j.Train).Single(j => j.JourneyID == booking.JourneyID);
             
-
             Booking[] bookings = _context.Bookings.ToArray();
             
             // Making sure that the journey is reserved before the departure time 
@@ -92,7 +94,28 @@ namespace TrainReservation.Controllers
 
                 if (ModelState.IsValid && SeatsTaken <= TrainCapacity && journey.IsCanceled == false) {  /* [3] */
 
+                    // check if user wants to book a return ticket
+                    if (!String.IsNullOrEmpty(ReturnJourneyInput)) {
+                        
+                        // making sure that user has entered a number 
+                        if (int.TryParse(ReturnJourneyInput, out int JourneyID)) {
+
+                            Booking newBooking = new Booking();
+                            Journey newJourney = _context.Journeys.Single(j => j.JourneyID == JourneyID);
+                            
+                            newBooking.UserID = user.Id;
+                            newBooking.JourneyID = JourneyID;
+                            newBooking.Cost = booking.Passengers * newJourney.Price;
+                            newBooking.Passengers = booking.Passengers;
+                            
+                            _context.Add(newBooking);
+
+                            TempData["BookReturnTicket"] = "You have successfully booked the trip from " + journey.Destination + " to " + journey.Departure;
+                        }
+                    }
+
                     _context.Add(booking);
+                    
 
                     // check if seat(s) reservations are allowed, and if so,
                     // check if a seats reservation request is provided by the user 
@@ -112,19 +135,33 @@ namespace TrainReservation.Controllers
                         }
                     }
 
+
                     // if the journey is paid 
                     if (payment.pay()) {
                         await _context.SaveChangesAsync();
                     }
 
                 } else {
-                    return Redirect("/Journeys/Details/" + journey.JourneyID);
+
+                    if (journey == null)
+                    {
+                        return NotFound();
+                    }
+
+                    TempData["Error"] = "Something went wrong";
+
+                    return View("Views/Journeys/Details", journey);
                 }
             }
 
-            return Redirect("/Bookings");
+            TempData["Success"] = "You have successfully booked the trip from " + journey.Departure + " to " + journey.Destination;
+            
+            return RedirectToAction("Index");
         }
 
+        private bool BookReturnTicket(int Booking) {
+            return true;
+        }
         
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CancelBooking(int BookingID)

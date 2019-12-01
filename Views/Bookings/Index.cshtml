@@ -5,6 +5,30 @@
 
 <h4 class="mt-2 mb-3">Your bookings</h4>
 
+<!-- Notification section starts here -->
+<div class="row">
+    <div class="col-md-6">
+        @if (TempData["Success"] != null) {
+            <div class="alert alert-success" role="alert">
+                @TempData["Success"]
+            </div>
+        }
+
+        @if (TempData["BookReturnTicket"] != null) {
+            <div class="alert alert-success" role="alert">
+                @TempData["BookReturnTicket"]
+            </div>
+        }
+
+        @if (TempData["Error"] != null) {
+            <div class="alert alert-success" role="alert">
+                @TempData["Error"]
+            </div>
+        }
+    </div>
+</div>
+<!-- Notification section ends here -->
+
 <!-- Checking if there are any existing bookings -->
 @if (Enumerable.Count(ViewBag.Bookings) > 0) {
     
@@ -13,7 +37,6 @@
 
         <div class="row mb-5">
             <div class="col-md-6">
-                
 
                 <div class="card">
                     <div class="card-body">

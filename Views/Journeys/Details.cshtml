@@ -223,16 +223,11 @@
             $('#price').text("$" + price);
         }
 
-        // INITIAL POINT
-        (function () {
-            let Capacity = $('#capacity').text().replace('(', '').replace(')', '');
+        // Show and hide Payment form when user clicks
+        // pay button. 
+        function WatchPaymentForm() {
             let showPaymentForm = false;
             let paymentCard = $('.payment-card');
-
-            PassengersControllers(Capacity);
-            WatchReserveSeatsCheckbox();
-
-            ReserveSeats();  
 
             paymentCard.hide();
 
@@ -244,6 +239,59 @@
                     paymentCard.fadeIn(330);
                     showPaymentForm = true;
                 }
+            });
+        }
+
+        function GetSelectedJourneyPrice() {
+            let SelectedOption = $('#ReturnJourney').children("option:checked").text();
+
+            // Retrieve the price of the second journey 
+            SelectedOption = SelectedOption.substring(SelectedOption.indexOf('$') + 1, SelectedOption.length);
+
+            return parseInt(SelectedOption);
+        }
+
+        // INITIAL POINT
+        (function () {
+            let Capacity = $('#capacity').text().replace('(', '').replace(')', '');
+            
+            PassengersControllers(Capacity);
+            WatchReserveSeatsCheckbox();
+            ReserveSeats();  
+            WatchPaymentForm();
+
+            let ReturnJourneyInput = $('#ReturnJourneyInput');
+            let JourneyReturnID = $('#ReturnJourney').val();
+
+            $('.returnJourney').hide();
+
+            $('#JourneyIntervalDouble').on('click', function () {
+                $('.returnJourney').fadeIn();
+
+                SetPrice(GetSelectedJourneyPrice() + GetCurrentPrice());
+
+                $('#ReturnJourney').data('current-value', GetSelectedJourneyPrice())
+
+                ReturnJourneyInput.val(JourneyReturnID);
+            });
+
+            $('#JourneyIntervalSingle').on('click', function () {
+                $('.returnJourney').fadeOut();
+
+                ReturnJourneyInput.val("");
+            });
+
+            $('#ReturnJourney').change(function() {
+                let JourneyReturnID = $('#ReturnJourney').val();
+                let currentValue = parseInt($('#ReturnJourney').data('current-value'));
+                
+                if (currentValue != null) {
+                    SetPrice((GetCurrentPrice() - currentValue) + GetSelectedJourneyPrice());
+                } 
+                
+                $('#ReturnJourney').data('current-value', GetSelectedJourneyPrice())
+
+                ReturnJourneyInput.val(JourneyReturnID);
             });
 
         })();
@@ -293,6 +341,39 @@
                     </label>
                 </div>
                 }
+
+                <br>
+
+                <!-- Single interval -->
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="JourneyInterval" id="JourneyIntervalSingle" value="single" checked>
+                    <label class="form-check-label" for="JourneyIntervalSingle">Single</label>
+                </div>
+
+                <!-- Returned interval -->
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="JourneyInterval" id="JourneyIntervalDouble" value="return">
+                    <label class="form-check-label" for="JourneyIntervalDouble">Return</label>
+                </div>
+
+                <br><br>
+
+                <!-- Journeys -->
+                <div class="form-group row returnJourney">
+
+                    <div class="input-group mb-3 col-md-9">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-route"></i></span>
+                        </div>
+
+                        <select id="ReturnJourney" class ="form-control" data-current-value="">
+                            @foreach (var Journey in ViewBag.Journeys)
+                            {
+                                <option value="@Journey.JourneyID">(@Journey.DepartureTime) @Journey.Departure - @Journey.Destination  $@Journey.Price</option>
+                            }
+                        </select>
+                    </div>
+                </div>
 
                 <hr>
 
@@ -387,6 +468,7 @@
                                 <input type="hidden" name="JourneyID" value="@Model.JourneyID" />
                                 <input type="hidden" name="UserID" value="@userManager.GetUserId(User)" />
                                 <input type="hidden" name="SeatsReceived" value="0" id="seatsReceived" />
+                                <input type="hidden" name="ReturnJourneyInput" value="" id="ReturnJourneyInput" />
 
                                 <input type="submit" value="Confirm" class="btn btn-sm btn-dark" disabled="@SubmittionNotAllowed">
                             </form>

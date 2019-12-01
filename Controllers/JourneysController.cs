@@ -55,6 +55,10 @@ namespace TrainReservation.Controllers
                 return NotFound();
             }
 
+            // Retriving a list of journeys that user may want to return from. 
+            ViewBag.Journeys = _context.Journeys
+                                       .Where(j => j.Departure == journey.Destination && j.DepartureTime > journey.ArrivalTime);
+
             return View(journey);
         }
 
